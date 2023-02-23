@@ -15,6 +15,7 @@ namespace Player
         Jump,
         Fall,
         WallSlide,
+        LedgeGrab,
         Boost,
         Dodge
     }
@@ -68,6 +69,11 @@ namespace Player
         [HideInInspector] public bool bCanWallSlide = false;
         [HideInInspector] public bool bWallSlide = true;
         [HideInInspector] public bool bIsWallSlideOnCooldown = false;
+
+        [Header("Ledge Grab And Climb")] 
+        public float ledgeClimbSpeed;
+        [HideInInspector] public bool bLedgeGrab = true;
+        [HideInInspector] public bool bIsOnLedge = false;
         
         [Header("Crouch")]
         [HideInInspector] public bool bCanUncrouch = false;
@@ -94,12 +100,14 @@ namespace Player
         
         void Update()
         {
-            if (moveDirection.x < 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide)) lookingDirection = -1;
-            else if (moveDirection.x > 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide)) lookingDirection = 1;
+            if (moveDirection.x < 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) 
+                                    && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab)) lookingDirection = -1;
+            else if (moveDirection.x > 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) 
+                                         && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab)) lookingDirection = 1;
 
             if (!stateMachine.CheckCurrentState(PlayerStates.Jump)) {
                 bIsGrounded = Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x / 2, 0.1f), 
-                    Vector2.down, initColliderSize.y / 2 + 0.2f, "Environment");
+                    Vector2.down, initColliderSize.y / 2 + 0.25f, "Environment");
                 
             }
             
@@ -111,15 +119,22 @@ namespace Player
                 else if (moveDirection != Vector2.zero) stateMachine.SetCurrentState(PlayerStates.Move);
             }
 
-            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown && !stateMachine.CheckCurrentState(PlayerStates.WallSlide))
+            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown && 
+                     !stateMachine.CheckCurrentState(PlayerStates.WallSlide) && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab))
             {
                 if (moveDirection.x < -0.5 || moveDirection.x > 0.5)
                 {
                     bCanWallSlide = Utils.ShootBoxcast(transform.position, new Vector2(0.2f, initColliderSize.y / 4),
                         Vector2.right * lookingDirection, initColliderSize.x / 2 + 0.2f, "Environment");
-                    if (bCanWallSlide && bWallSlide)
+                    
+                    bIsOnLedge = !Utils.ShootRaycast(new Vector2(transform.position.x, transform.position.y + 
+                            initColliderSize.y / 4), new Vector2(lookingDirection, 0), 
+                        initColliderSize.y / 2, "Environment");
+                    
+                    if (bCanWallSlide && (bWallSlide || bLedgeGrab))
                     {
-                        stateMachine.SetCurrentState(PlayerStates.WallSlide);
+                        if(bIsOnLedge) stateMachine.SetCurrentState(PlayerStates.LedgeGrab);
+                        else stateMachine.SetCurrentState(PlayerStates.WallSlide);
                         return;
                     }
                 }
@@ -127,7 +142,7 @@ namespace Player
             
             if (rb2D.velocity.y < 0 && !bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) &&
                 !stateMachine.CheckCurrentState(PlayerStates.Boost) && !stateMachine.CheckCurrentState(PlayerStates.Dodge) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Crouch))
+                !stateMachine.CheckCurrentState(PlayerStates.Crouch) && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab))
             {
                 stateMachine.SetCurrentState(PlayerStates.Fall);
             }

@@ -18,7 +18,8 @@ namespace Player
         
         private bool bCanMove = true;
         private bool bCanWallJump = false;
-        
+
+        private bool bBlockState = false;
 
         // Start is called before the first frame update
         void Start()
@@ -38,6 +39,7 @@ namespace Player
           // Player states methods
         public void SetCurrentState(PlayerStates state)
         {
+            if (bBlockState) return;
             previousState = currentState;
             currentState = state;
             if (currentState != previousState)
@@ -79,6 +81,22 @@ namespace Player
                                                      playerMovement.jumpForce, ForceMode2D.Impulse);
                         playerMovement.lookingDirection *= (-1);
                     }
+                    else if (previousState == PlayerStates.LedgeGrab)
+                    {
+                        if ((playerMovement.moveDirection.x > 0 && playerMovement.lookingDirection < 0) || 
+                            (playerMovement.moveDirection.x < 0 && playerMovement.lookingDirection > 0))
+                        {
+                            StartCoroutine(WallSlideCooldown());
+                            StartCoroutine(BlockInput());
+                            playerMovement.rb2D.AddForce(new Vector2(-playerMovement.lookingDirection * 0.75f, 1.25f) * 
+                                                         playerMovement.jumpForce, ForceMode2D.Impulse);
+                            playerMovement.lookingDirection *= (-1);
+                        }
+                        else
+                        {
+                            StartCoroutine(LedgeClimb());
+                        }
+                    }
                     else if (previousState == PlayerStates.Boost)
                     {
                         playerMovement.rb2D.AddForce(new Vector2(playerMovement.moveDirection.x / 2, 1.25f) * 
@@ -88,6 +106,7 @@ namespace Player
                     {
                         bNormalJump = true;
                         playerMovement.bWallSlide = false;
+                        playerMovement.bLedgeGrab = false;
                         playerMovement.rb2D.AddForce(Vector2.up * playerMovement.jumpForce / 2, ForceMode2D.Impulse);
                     }
                     playerMovement.jumpCount--;
@@ -117,6 +136,12 @@ namespace Player
                     bCanWallJump = true;
                     if(playerMovement.rb2D.velocity.y < 0) playerMovement.rb2D.velocity = new Vector2(playerMovement.rb2D.velocity.x, 0);
                     StartCoroutine(PushPlayerOfTheWall());
+                    break;
+                case PlayerStates.LedgeGrab:
+                    playerMovement.jumpCount = playerMovement.maxJumpCount;
+                    playerMovement.rb2D.gravityScale = 0;
+                    playerMovement.rb2D.velocity = Vector2.zero;
+                    bCanMove = false;
                     break;
                 default: break;
             }
@@ -166,7 +191,7 @@ namespace Player
                     {
                         if (jumpTimeCounter > 0 && playerMovement.bIsJumping)
                         {
-                            if (jumpTimeCounter <= jumpTime / 2) playerMovement.bWallSlide = true; 
+                            
                             playerMovement.rb2D.AddForce(Vector2.up * playerMovement.jumpForce / 10, ForceMode2D.Impulse);
                             jumpTimeCounter -= Time.deltaTime;
                         }
@@ -195,6 +220,9 @@ namespace Player
                         new Vector2(0.2f, playerMovement.initColliderSize.y / 4), Vector2.right * playerMovement.lookingDirection, 
                         playerMovement.initColliderSize.x / 2 + 0.2f, "Environment");
                     break;
+                case PlayerStates.LedgeGrab:
+                    if(playerMovement.direction.y <= -0.5f) SetCurrentState(PlayerStates.Fall);
+                    break;
                 default: break;
             }
         }
@@ -214,6 +242,8 @@ namespace Player
                 case PlayerStates.Jump:
                     jumpTimeCounter = jumpTime;
                     bNormalJump = false;
+                    playerMovement.bWallSlide = true;
+                    playerMovement.bLedgeGrab = true;
                     break;
                 case PlayerStates.Dodge:
                     var enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -222,6 +252,10 @@ namespace Player
                         Physics2D.IgnoreCollision(GetComponentInChildren<CapsuleCollider2D>(), 
                             enemy.GetComponent<Collider2D>(), false);
                     }
+                    break;
+                case PlayerStates.LedgeGrab:
+                    playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
+                    bCanMove = true;
                     break;
                 default: break;
             }
@@ -258,7 +292,7 @@ namespace Player
         private IEnumerator Boost()
         {
             var destination = new Vector2(playerMovement.transform.position.x, playerMovement.transform.position.y + playerMovement.boostHeight);
-            yield return new WaitUntil(() => IsOnPosition(destination));
+            yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Boost, playerMovement.boostSpeed, 0.5f));
             if (currentState == PlayerStates.Boost)
             {
                 playerMovement.stick.enabled = true;
@@ -280,12 +314,26 @@ namespace Player
             }
         }
 
-        private bool IsOnPosition(Vector2 destination)
+        private bool IsOnPosition(Vector2 destination, PlayerStates state, float speed, float precision)
         {
-            transform.position = Vector2.MoveTowards(playerMovement.transform.position, destination, playerMovement.boostSpeed);
-            return Vector2.Distance(playerMovement.transform.position, destination) < 0.5f || currentState != PlayerStates.Boost;
+            transform.position = Vector2.MoveTowards(playerMovement.transform.position, destination, speed);
+            return Vector2.Distance(playerMovement.transform.position, destination) < precision || currentState != state;
         }
 
+        private IEnumerator LedgeClimb()
+        {
+            playerMovement.bBlockMovement = true;
+            bBlockState = true;
+            var destination = new Vector2(playerMovement.transform.position.x, 
+                playerMovement.transform.position.y + playerMovement.initColliderSize.y);
+            yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
+            destination = new Vector2(playerMovement.transform.position.x + playerMovement.initColliderSize.x * playerMovement.lookingDirection, 
+                playerMovement.transform.position.y);
+            yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
+            playerMovement.bBlockMovement = false;
+            bBlockState = false;
+        }
+        
         private IEnumerator WallSlideCooldown()
         {
             playerMovement.bIsWallSlideOnCooldown = true;
