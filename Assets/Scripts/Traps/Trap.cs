@@ -9,18 +9,18 @@ public abstract class Trap : MonoBehaviour
     [SerializeField] protected int damage;
 
     // Start is called before the first frame update
-    protected virtual void Start()
+    protected virtual void Setup()
     {
         gameObject.tag = "Trap";
     }
 
-    protected abstract void Attack();
+    protected abstract void Attack(GameObject other);
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other && other.gameObject.CompareTag("Player"))
+        if (other && other.gameObject.layer == (int)Layers.Player)
         {
-            Attack();
+            Attack(other.gameObject);
         }
     }
 }

@@ -8,11 +8,12 @@ public class Spikes : Trap
     // Start is called before the first frame update
     void Start()
     {
-        base.Start();
+        base.Setup();
     }
 
-    protected override void Attack()
+    protected override void Attack(GameObject other)
     {
-        GameObject.FindWithTag("Player").GetComponent<PlayerCombat>().ReceiveDamage(damage);
+        //TODO: temporary workaround
+        other.GetComponentInParent<IDamageable>().ReceiveDamage(damage);
     }
 }

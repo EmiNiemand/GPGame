@@ -9,18 +9,21 @@ namespace Player
 {
     public class PlayerCombat : MonoBehaviour, IDamageable
     {
-        public int HP { get; protected set; }
         [field: SerializeField] public int maxHP { get; protected set; }
+        public int HP { get; protected set; }
+        public float invincibilityTime = 1.0f;
+
         private Rigidbody2D rb2D;
         private Weapon weapon;
         private PlayerMovement playerMovement;
-    
-        private bool bIsVulnerable = true;
-        private bool bIsAttacking = false;
+
         [SerializeField] private bool bIsCombatActivated = false;
+        private bool bIsVulnerable = true;
+        private bool bIsInvincible = false;
+        private bool bIsAttacking = false;
         private PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch, PlayerStates.Dodge };
     
-        // UI
+        // External references, probably need to improve that
         private GameUI gui;
 
         // Start is called before the first frame update
@@ -49,15 +52,17 @@ namespace Player
     
         public void Heal(int value)
         {
-            if (HP + value > maxHP) HP = maxHP;
-            else HP += value;
+            HP += value;
+            if (HP > maxHP) HP = maxHP;
     
             gui.UpdateHealth(HP);
         }
     
         public void ReceiveDamage(int damage, Vector2 sourcePoint=default, int knockbackForce=0)
         {
-            if (!bIsVulnerable) return;
+            if (!bIsVulnerable || bIsInvincible) return;
+            StartCoroutine(InvincibilityTime());
+
             HP -= damage;
             
             if (HP <= 0)
@@ -71,8 +76,15 @@ namespace Player
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
                 rb2D.AddForce(knockbackVector.normalized * knockbackForce);
             }
-                            
+            
             gui.UpdateHealth(HP);
+        }
+
+        private IEnumerator InvincibilityTime()
+        {
+            bIsInvincible = true;
+            yield return new WaitForSeconds(invincibilityTime);
+            bIsInvincible = false;
         }
     
         private void OnDeath()

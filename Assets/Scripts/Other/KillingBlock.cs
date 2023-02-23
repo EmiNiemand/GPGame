@@ -6,11 +6,11 @@ namespace Other
 {
     public class KillingBlock : MonoBehaviour
     {
-        private void OnTriggerEnter2D(Collider2D collider)
+        private void OnTriggerStay2D(Collider2D collider)
         {
             if (collider != null && collider.CompareTag("Player"))
             {
-                collider.GetComponent<IDamageable>().ReceiveDamage(10000);
+                collider.gameObject.GetComponentInParent<IDamageable>().ReceiveDamage(10000);
             }
         }
     }
