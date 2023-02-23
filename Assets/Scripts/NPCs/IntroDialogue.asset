@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350c1b2277ee505459cfb5d697000d0a, type: 3}
+  m_Name: IntroDialogue
+  m_EditorClassIdentifier: 
+  characterName: Jeff
+  initialName: ???
+  description: Scaredy cat
+  initialDescription: He looks frightened
+  dialogueLines:
+  - EEEEEK! Don't hurt me!
+  - ...wait
+  - You're not one of *them*, are you?
+  - then... how did you sneak past them?
+  - I'm sorry for my initial reaction, but...
+  - we didn't have contact with anyone outside for a very long time
+  - I saw the world turn white twice since
+  - I'm Jeff, by the way
+  - Anyway... you probably wanna talk with the guy living in the tall building
+  - He can give you some food and a place to rest
+  - You will probably encounter King of Hedgehogs
+  - Just remember fighting is not always the best option...
+  - 
