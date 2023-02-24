@@ -23,13 +23,20 @@ public class GlowWorm : MonoBehaviour
             for (float j = 0; j <= 1; j += t)
             {
                 destinations.Add(
-                    Mathf.Pow((1 - j), 2) * points[i].transform.position + 2 * (1 - j) * j * points[i + 1].transform.position +
+                    Mathf.Pow((1 - j), 2) * points[i].transform.position +
+                    2 * (1 - j) * j * points[i + 1].transform.position +
                     Mathf.Pow(j, 2) * points[i + 2].transform.position
                 );
             }
         }
 
         destination = destinations[0];
+        
+        // TODO: comment before the build
+        for(int i = 0; i < destinations.Count - 1; i++)
+        {
+            Debug.DrawLine(destinations[i], destinations[i + 1], Color.red, 2000f);
+        }
     }
 
     // Update is called once per frame
