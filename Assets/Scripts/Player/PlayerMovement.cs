@@ -129,7 +129,7 @@ namespace Player
                     
                     bIsOnLedge = !Utils.ShootRaycast(new Vector2(transform.position.x, transform.position.y + 
                             initColliderSize.y / 4), new Vector2(lookingDirection, 0), 
-                        initColliderSize.y / 2, "Environment");
+                        initColliderSize.y / 2 + 0.4f, "Environment");
                     
                     if (bCanWallSlide && (bWallSlide || bLedgeGrab))
                     {
