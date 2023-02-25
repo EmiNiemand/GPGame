@@ -6,13 +6,13 @@ using UnityEngine.U2D;
 public class GlowWorm : MonoBehaviour
 {
     [SerializeField] private List<GameObject> points;
-    [SerializeField] private float moveSpeed = 0.1f;
+    [SerializeField] private float minMoveSpeed = 0.1f;
+    [SerializeField] private float minDistanceToMove;
+    
     private List<Vector2> destinations = new List<Vector2>();
     private Vector2 destination;
 
     private float t;
-
-    private bool bMoveToNextDestination = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,10 +42,14 @@ public class GlowWorm : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!bMoveToNextDestination && (transform.position.x < GameObject.FindGameObjectWithTag("Player").transform.position.x ||
-                                       transform.position.y < GameObject.FindGameObjectWithTag("Player").transform.position.y)) bMoveToNextDestination = true;
+        var distance = Vector2.Distance(transform.position, GameObject.FindWithTag("Player").transform.position);
+        Debug.Log(distance);
+        
+        if (distance > minDistanceToMove) return;
 
-        if (bMoveToNextDestination) transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed);
+        float moveSpeed = minMoveSpeed / distance;
+        
+        transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed);
 
         if (Vector2.Distance(transform.position, destination) < 0.001f)
         {
@@ -55,15 +59,6 @@ public class GlowWorm : MonoBehaviour
                 return;
             }
             destination = destinations[destinations.IndexOf(destination) + 1];
-            bMoveToNextDestination = false;
-        }
-    }
-
-    void OnTriggerStay2D(Collider2D collider)
-    {
-        if (collider != null && collider.gameObject.CompareTag("Player"))
-        {
-            bMoveToNextDestination = true;
         }
     }
 }
