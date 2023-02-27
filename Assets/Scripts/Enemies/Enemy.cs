@@ -124,7 +124,8 @@ namespace Enemies
 
             if (HP <= 0)
             {
-                Destroy(GameObject.Instantiate(deathEffect, transform.position, Quaternion.identity), 2.0f);
+                if(deathEffect)
+                    Destroy(GameObject.Instantiate(deathEffect, transform.position, Quaternion.identity), 2.0f);
                 Destroy(gameObject);
             }
         }
