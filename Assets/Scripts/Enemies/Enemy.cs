@@ -11,8 +11,8 @@ namespace Enemies
     {
         // IDamageable variables
         [Header("Combat")]
-        [SerializeField] protected int damage;
-        [SerializeField] protected int knockbackForce;
+        [field: SerializeField] public int damage;
+        [field: SerializeField] public int knockbackForce;
         [field: SerializeField] public int maxHP {get; protected set;}
         public int HP {get; protected set;}
 
@@ -37,7 +37,7 @@ namespace Enemies
 
         protected Rigidbody2D rb2D;
         protected SpriteRenderer spriteRenderer;
-        protected int lookingDirection;
+        public int lookingDirection {get; protected set;}
 
         // Start is called before the first frame update
         protected virtual void Start()
