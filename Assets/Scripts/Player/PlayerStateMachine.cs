@@ -291,11 +291,11 @@ namespace Player
         private IEnumerator Boost()
         {
             var destination = new Vector2(playerMovement.transform.position.x, playerMovement.transform.position.y + playerMovement.boostHeight);
-            yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Boost, playerMovement.boostSpeed, 0.5f));
             if (currentState == PlayerStates.Boost)
             {
                 playerMovement.rb2D.gravityScale = 0;
             }
+            yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Boost, playerMovement.boostSpeed, 0.5f));
             yield return StartCoroutine(Wait(playerMovement.boostTime, PlayerStates.Boost));
             if (currentState == PlayerStates.Boost) SetCurrentState(PlayerStates.Fall);
         }
