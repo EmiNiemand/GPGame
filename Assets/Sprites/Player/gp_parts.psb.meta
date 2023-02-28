@@ -858,7 +858,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 4, y: 576}
-    spritePosition: {x: 362, y: 710}
+    spritePosition: {x: 362, y: 711}
   - name: front_paw
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -1798,7 +1798,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 657, y: 137}
-    spritePosition: {x: 421, y: 547}
+    spritePosition: {x: 421, y: 548}
   - name: front_shoe
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -2496,7 +2496,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 430, y: 557}
-    spritePosition: {x: 366, y: 140}
+    spritePosition: {x: 366, y: 141}
   - name: front_leg_up
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -2813,7 +2813,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 429, y: 4}
-    spritePosition: {x: 287, y: 233}
+    spritePosition: {x: 288, y: 233}
   - name: body
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -3205,7 +3205,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 4, y: 3}
-    spritePosition: {x: 278, y: 265}
+    spritePosition: {x: 278, y: 266}
   - name: back_shoe
     originalName: 
     pivot: {x: 0.5, y: 0.5}
