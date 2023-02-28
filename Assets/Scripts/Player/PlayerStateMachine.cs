@@ -232,7 +232,6 @@ namespace Player
             switch (state)
             {
                 case PlayerStates.Boost:
-                    playerMovement.stick.enabled = false;
                     playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
                     break;
                 case PlayerStates.WallSlide:
@@ -295,7 +294,6 @@ namespace Player
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Boost, playerMovement.boostSpeed, 0.5f));
             if (currentState == PlayerStates.Boost)
             {
-                playerMovement.stick.enabled = true;
                 playerMovement.rb2D.gravityScale = 0;
             }
             yield return StartCoroutine(Wait(playerMovement.boostTime, PlayerStates.Boost));

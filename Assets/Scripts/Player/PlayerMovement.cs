@@ -23,7 +23,6 @@ namespace Player
     public class PlayerMovement : MonoBehaviour
     {
         [HideInInspector] public Rigidbody2D rb2D;
-        [HideInInspector] public SpriteRenderer stick;
         
         [HideInInspector] public Vector2 initColliderSize;
         
@@ -89,8 +88,6 @@ namespace Player
         {
             stateMachine = gameObject.AddComponent<PlayerStateMachine>();
             rb2D = GetComponent<Rigidbody2D>();
-            stick = GameObject.Find("Stick").GetComponent<SpriteRenderer>();
-            stick.enabled = false;
             jumpCount = maxJumpCount;
             initGravityScale = rb2D.gravityScale;
             initColliderSize = GetComponentInChildren<CapsuleCollider2D>().size;
