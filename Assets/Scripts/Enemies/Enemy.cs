@@ -37,6 +37,7 @@ namespace Enemies
 
         protected Rigidbody2D rb2D;
         protected SpriteRenderer spriteRenderer;
+        protected EnemyUI enemyUI;
         public int lookingDirection {get; protected set;}
 
         // Start is called before the first frame update
@@ -47,6 +48,9 @@ namespace Enemies
 
             rb2D = GetComponent<Rigidbody2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            enemyUI = GetComponentInChildren<EnemyUI>();
+            enemyUI.Setup();
+            enemyUI.SetMaxHP(maxHP);
             lookingDirection = GetComponentInParent<EnemySpawner>().lookingDirection;
 
             basicColor = spriteRenderer.color;
@@ -128,6 +132,7 @@ namespace Enemies
                     Destroy(GameObject.Instantiate(deathEffect, transform.position, Quaternion.identity), 2.0f);
                 Destroy(gameObject);
             }
+            enemyUI.UpdateHP(HP);
         }
     }
 }
