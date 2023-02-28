@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5485070560416844300}
   - component: {fileID: 6044923449598394527}
   - component: {fileID: 2309453255561589848}
-  - component: {fileID: 9221025643553002775}
   m_Layer: 7
   m_Name: Plant
   m_TagString: Enemy
@@ -137,19 +136,4 @@ MonoBehaviour:
   basicColor: {r: 0, g: 0, b: 0, a: 0}
   deathEffect: {fileID: 3933291694584055901, guid: 0a5a831ff78026a4a8346dab7f099074, type: 3}
   missilePrefab: {fileID: 4620698477098381910, guid: aba569284f8d99243b4179b14d54ce87, type: 3}
---- !u!58 &9221025643553002775
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 375440460183208359}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 10
+  distanceToActivate: 5
