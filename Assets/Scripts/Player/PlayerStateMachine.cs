@@ -322,12 +322,20 @@ namespace Player
         {
             playerMovement.bBlockMovement = true;
             bBlockState = true;
+            
+            playerMovement.rb2D.gravityScale = 0;
+            playerMovement.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            
             var destination = new Vector2(playerMovement.transform.position.x, 
                 playerMovement.transform.position.y + playerMovement.initColliderSize.y);
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
             destination = new Vector2(playerMovement.transform.position.x + playerMovement.initColliderSize.x * playerMovement.lookingDirection, 
                 playerMovement.transform.position.y);
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
+
+            playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
+            playerMovement.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
             playerMovement.bBlockMovement = false;
             bBlockState = false;
         }
