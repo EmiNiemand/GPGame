@@ -42,6 +42,54 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3832332655
+    locked: 0
+  - name: CollisionGround
+    uniqueID: 2124937829
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Totems
+    uniqueID: 2552576151
+    locked: 0
+  - name: NPC
+    uniqueID: 2234084331
+    locked: 0
+  - name: Enemies
+    uniqueID: 2818715761
+    locked: 0
+  - name: Player
+    uniqueID: 210344527
+    locked: 0
+  - name: Usables
+    uniqueID: 505699419
+    locked: 0
+  - name: Traps
+    uniqueID: 309063379
+    locked: 0
+  - name: Bullets
+    uniqueID: 4127833761
+    locked: 0
+  - name: UsablesUI
+    uniqueID: 2760416225
+    locked: 0
+  - name: NpcUI
+    uniqueID: 1011946677
+    locked: 0
+  - name: EnemyUI
+    uniqueID: 3288054113
+    locked: 0
+  - name: PlayerUI
+    uniqueID: 2246592513
+    locked: 0
+  - name: Foreground
+    uniqueID: 3128808463
+    locked: 0
+  - name: TutorialUI
+    uniqueID: 1250751095
+    locked: 0
+  - name: GameUI
+    uniqueID: 1233539199
     locked: 0

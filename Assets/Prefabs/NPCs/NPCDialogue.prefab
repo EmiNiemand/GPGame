@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1541724741637287016}
   - component: {fileID: 3750224029429951372}
   - component: {fileID: 2407165928616221440}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: DialogueBackdrop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 7421327988699480793}
   - component: {fileID: 3994798809853129479}
   - component: {fileID: 1789758758}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: DialogueText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 3488510494205542395}
   - component: {fileID: 4174785497332135832}
   - component: {fileID: 618659181615932913}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 1861945264736007292}
   - component: {fileID: 5330001399926260898}
   - component: {fileID: 3468561175918817519}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: DescriptionText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -543,7 +543,7 @@ GameObject:
   - component: {fileID: 4001392246338159809}
   - component: {fileID: 5191059461274412510}
   - component: {fileID: 1501797477280231822}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -603,9 +603,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingLayerID: -2060882965
+  m_SortingLayer: 2
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: c01bbd7fc007daf43bd7b2264c3c6fdf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -708,7 +708,7 @@ MonoBehaviour:
   - {x: -0.049544573, y: -0.5560756, z: 0}
   m_ShapePathHash: 1192379139
   m_Mesh: {fileID: 0}
-  m_InstanceId: -2074
+  m_InstanceId: -4216
 --- !u!1 &5916529055910654113
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 7971509254455092509}
   - component: {fileID: 1495802711004447586}
   - component: {fileID: 1610839983963661749}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InteractionZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -785,7 +785,8 @@ GameObject:
   - component: {fileID: 7748127724300145206}
   - component: {fileID: 6466496763804415977}
   - component: {fileID: 1441809320}
-  m_Layer: 5
+  - component: {fileID: 5009377172612969624}
+  m_Layer: 8
   m_Name: NPCInterface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -913,6 +914,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324dd435eeff5654f9b0c7e3a8d4dc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5009377172612969624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847084311046159116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 324dd435eeff5654f9b0c7e3a8d4dc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9203677778513541171
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,7 +936,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3144219149310040372}
   - component: {fileID: 1683494365}
-  m_Layer: 0
+  - component: {fileID: 9203946713437762026}
+  m_Layer: 8
   m_Name: NPCDialogue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -949,6 +963,19 @@ Transform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1683494365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9203677778513541171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb08e78609847c444a3731ef7c160e8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcDialogueInfo: {fileID: 11400000, guid: 9b59352ae6665aa4c8ca3881a7a9ac70, type: 2}
+--- !u!114 &9203946713437762026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

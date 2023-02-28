@@ -43,7 +43,7 @@ public class GlowWorm : MonoBehaviour
     void FixedUpdate()
     {
         var distance = Vector2.Distance(transform.position, GameObject.FindWithTag("Player").transform.position);
-        Debug.Log(distance);
+        // Debug.Log(distance);
         
         if (distance > minDistanceToMove) return;
 

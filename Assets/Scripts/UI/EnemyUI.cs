@@ -17,7 +17,7 @@ public class EnemyUI : MonoBehaviour
     { 
         hpBar.maxValue = maxHP; 
         hpBar.value = maxHP;
-        hpBar.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(maxHP*0.4f, 0.4f);
+        hpBar.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(maxHP*0.2f, 0.2f);
     }
 
     public void UpdateHP(int currentHP)

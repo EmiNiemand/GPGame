@@ -117,7 +117,10 @@ namespace Enemies
         protected void ChangeLookingDirection()
         {
             lookingDirection *= -1;
-            gameObject.transform.localScale = new Vector3(Mathf.Abs(gameObject.transform.localScale.x) * lookingDirection, gameObject.transform.localScale.y, 1);
+            gameObject.transform.localScale = new Vector3(-gameObject.transform.localScale.x, gameObject.transform.localScale.y, 1);
+
+            var uiScale = enemyUI.gameObject.transform.localScale;
+            enemyUI.gameObject.transform.localScale = new Vector3(-uiScale.x, uiScale.y);
         }
 
         // Knockback implementation is up to child classes 
