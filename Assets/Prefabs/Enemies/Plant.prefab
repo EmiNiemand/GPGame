@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8831937295960585065}
+  - component: {fileID: 2309453255561589848}
   - component: {fileID: 5485070560416844300}
   - component: {fileID: 6044923449598394527}
-  - component: {fileID: 2309453255561589848}
   m_Layer: 7
   m_Name: Plant
   m_TagString: Enemy
@@ -35,6 +35,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2309453255561589848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375440460183208359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 140b8c0ccf4bb694ab9f298d9c06f84f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockbackForce: 0
+  <maxHP>k__BackingField: 3
+  moveSpeed: 0
+  isFlashing: 0
+  flashingStage: 0
+  flashingSpeed: 10
+  flashingBackwards: 0
+  flashingColor: {r: 1, g: 0, b: 0, a: 1}
+  basicColor: {r: 0, g: 0, b: 0, a: 0}
+  deathEffect: {fileID: 3933291694584055901, guid: 0a5a831ff78026a4a8346dab7f099074, type: 3}
+  missilePrefab: {fileID: 4620698477098381910, guid: aba569284f8d99243b4179b14d54ce87, type: 3}
+  distanceToActivate: 5
+  missileSpawnShift: {x: 0.5, y: 0.5, z: 0}
 --- !u!212 &5485070560416844300
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -113,31 +139,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.42571625, y: 1.2792301}
   m_EdgeRadius: 0
---- !u!114 &2309453255561589848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 375440460183208359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 140b8c0ccf4bb694ab9f298d9c06f84f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
-  knockbackForce: 0
-  <maxHP>k__BackingField: 3
-  moveSpeed: 0
-  isFlashing: 0
-  flashingStage: 0
-  flashingSpeed: 10
-  flashingBackwards: 0
-  flashingColor: {r: 1, g: 0, b: 0, a: 1}
-  basicColor: {r: 0, g: 0, b: 0, a: 0}
-  deathEffect: {fileID: 3933291694584055901, guid: 0a5a831ff78026a4a8346dab7f099074, type: 3}
-  missilePrefab: {fileID: 4620698477098381910, guid: aba569284f8d99243b4179b14d54ce87, type: 3}
-  distanceToActivate: 5
 --- !u!1 &1573964513408153299
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,8 +10,10 @@ namespace Enemies
         private GameObject missile;
         [SerializeField] private GameObject missilePrefab;
         [SerializeField] private float distanceToActivate;
-        private GameObject player;
+        [SerializeField] private Vector3 missileSpawnShift = Vector3.zero;
         
+        private GameObject player;
+
         // Start is called before the first frame update
         protected override void Start()
         {
@@ -24,8 +26,8 @@ namespace Enemies
         {
             if (Mathf.Abs(Vector2.Distance(player.transform.position, transform.position)) > distanceToActivate) return;
             if (missile) return;
-            missile = Instantiate(missilePrefab, transform.position + 
-                                                 new Vector3(spriteRenderer.size.x / 2 * lookingDirection, spriteRenderer.size.y / 4, 0), Quaternion.identity);
+            missile = Instantiate(missilePrefab, transform.position + new Vector3(missileSpawnShift.x * lookingDirection, 
+                missileSpawnShift.y, missileSpawnShift.z), Quaternion.identity);
             missile.transform.SetParent(gameObject.transform);
         }
     }
