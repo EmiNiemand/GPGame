@@ -17,6 +17,9 @@ namespace Player
         private Weapon weapon;
         private PlayerMovement playerMovement;
 
+        //TODO: it shouldn't be here, move to PlayerManager
+        private PlayerAnimations playerAnimations;
+
         [SerializeField] private bool bIsCombatActivated = false;
         private bool bIsVulnerable = true;
         private bool bIsInvincible = false;
@@ -30,6 +33,7 @@ namespace Player
         void Start()
         {
             playerMovement = GetComponent<PlayerMovement>();
+            playerAnimations = GetComponentInChildren<PlayerAnimations>();
             weapon = GetComponentInChildren<Weapon>();
             rb2D = GetComponent<Rigidbody2D>();
 
@@ -78,6 +82,7 @@ namespace Player
             }
             
             gui.UpdateHealth(HP);
+            playerAnimations.ShowReceiveDamage();
         }
 
         private IEnumerator InvincibilityTime()

@@ -88,6 +88,9 @@ namespace Player
             }
         }
 
+        public void ShowReceiveDamage() {
+            playerAnimator.SetTrigger("ReceiveDamage");
+        }
 
         #region Animation Events
         public void AE_MakeStep() { playerSFX.OnStep(); }
