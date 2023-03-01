@@ -13,18 +13,18 @@ namespace Enemies.Missiles
         [SerializeField] private int knockbackForce;
         [SerializeField] protected float speed;
 
-        private void OnTriggerEnter2D(Collider2D col)
+        private void OnCollisionEnter2D(Collision2D col)
         {
-            if (!col) return;
-            if (col.CompareTag("Player"))
+            if (col.gameObject.CompareTag("Player"))
             {
+                Debug.Log("dupa");
                 col.gameObject.GetComponentInParent<PlayerCombat>().ReceiveDamage(damage, transform.position, knockbackForce);
                 GetComponent<Light2D>().enabled = false;
                 GetComponent<CircleCollider2D>().enabled = false;
                 GetComponent<ParticleSystem>().Play();
                 Destroy(gameObject, 1f);
             }
-            else if (col.CompareTag("Environment"))
+            else if (col.gameObject.CompareTag("Environment"))
             {
                 GetComponent<Light2D>().enabled = false;
                 GetComponent<CircleCollider2D>().enabled = false;
