@@ -706,7 +706,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 443658335}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnMove
+        m_MethodName: Move
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -722,7 +722,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 443658335}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnJump
+        m_MethodName: Jump
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -754,7 +754,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 443658335}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnCrouch
+        m_MethodName: Crouch
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -770,7 +770,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 443658335}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnBoost
+        m_MethodName: Boost
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -802,7 +802,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 443658335}
         m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnDodge
+        m_MethodName: Dodge
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -6,11 +6,8 @@ using UnityEngine.Rendering.Universal;
 
 namespace CheckPoints
 {
-    public class SavePoint : MonoBehaviour
+    public class SavePoint : MonoBehaviour, IUsable
     {
-        [HideInInspector] public UnityEvent ActivateEvent;
-        [HideInInspector] public UnityEvent DeactivateEvent;
-        
         [SerializeField] private int healValue;
         [SerializeField] private float cooldown;
         
@@ -26,57 +23,41 @@ namespace CheckPoints
         {
            particleSystem = GetComponentInChildren<ParticleSystem>();
            activationIndicator = transform.Find("ActivationIndicator").gameObject;
-
-           if (ActivateEvent == null) ActivateEvent = new UnityEvent();
-           ActivateEvent.AddListener(Activate);
-           
-           if (DeactivateEvent == null) DeactivateEvent = new UnityEvent();
-           DeactivateEvent.AddListener(Deactivate);
         }
-
-        // Update is called once per frame
-        void Update()
+        
+        public void OnEnter(GameObject user)
         {
-            if (player == null) return;
-
-            bIsUsing = player.GetComponent<Player.PlayerInteraction>().IsUsing();
-
-            if (bIsUsing && !bIsOnCooldown)
-            {
-                StartCoroutine(Heal());
-            }
+            player = user;
             activationIndicator.SetActive(true);
         }
 
-        private IEnumerator Heal()
+        public void OnExit(GameObject user)
         {
-            bIsOnCooldown = true;
-            player.GetComponent<Player.PlayerCombat>().Heal(healValue);
-            FindObjectOfType<GameManager>().savePointEvent.Invoke(gameObject);
-            particleSystem.Play();
-            yield return new WaitForSeconds(cooldown);
-            bIsOnCooldown = false;
             player = null;
             activationIndicator.SetActive(false);
         }
 
-        private void OnTriggerEnter2D(Collider2D collider)
+        public void Use(GameObject user)
         {
-            if (collider != null && collider.CompareTag("Player"))
-            {
-                player = collider.gameObject.transform.parent.gameObject;
-            }
+            if (bIsOnCooldown) return;
+            StartCoroutine(Heal());
+        }
+        
+        private IEnumerator Heal()
+        {
+            bIsOnCooldown = true;
+            activationIndicator.SetActive(false);
+            player.GetComponent<Player.PlayerManager>().Heal(healValue);
+            FindObjectOfType<GameManager>().savePointEvent.Invoke(gameObject);
+            particleSystem.Play();
+            
+            yield return new WaitForSeconds(cooldown);
+            
+            bIsOnCooldown = false;
+            player = null;
         }
 
-        private void OnTriggerExit2D(Collider2D collider)
-        {
-            if (collider != null && collider.CompareTag("Player"))
-            {
-                player = null;
-            }
-        }
-
-        private void Activate()
+        public void Activate()
         {
             Light2D[] lights = GetComponentsInChildren<Light2D>();
             foreach (var singleLight in lights)
@@ -85,7 +66,7 @@ namespace CheckPoints
             }
         }
 
-        private void Deactivate()
+        public void Deactivate()
         {
             Light2D[] lights = GetComponentsInChildren<Light2D>();
             foreach (var singleLight in lights)

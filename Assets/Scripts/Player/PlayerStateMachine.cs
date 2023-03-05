@@ -9,6 +9,7 @@ namespace Player
         private PlayerStates currentState;
         private PlayerStates previousState;
         private PlayerMovement playerMovement;
+        private PlayerManager playerManager;
         
         private float jumpTime = 0.1f;
         private float jumpTimeCounter;
@@ -27,7 +28,8 @@ namespace Player
             jumpTimeCounter = jumpTime;
             currentState = PlayerStates.Idle;
             previousState = currentState;
-            playerMovement = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+            playerMovement = GetComponent<PlayerMovement>();
+            playerManager = GetComponent<PlayerManager>();
         }
 
         // Update is called once per frame
@@ -46,6 +48,7 @@ namespace Player
             {
                 OnExitState(previousState);
                 OnEnterState(currentState);
+                playerManager.OnStateChange(currentState);
             }
         }
         public PlayerStates GetPlayerState()

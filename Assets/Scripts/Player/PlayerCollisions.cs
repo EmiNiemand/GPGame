@@ -6,16 +6,14 @@ namespace Player
 {
     public class PlayerCollisions : MonoBehaviour
     {
-        GameObject player;
-        PlayerInteraction playerInteraction;
-        List<GameObject> usables;
+        private GameObject player;
+        // Needed to pass info about received damage
+        private PlayerManager playerManager;
+        private List<GameObject> usables;
 
         void Start() {
             player = transform.parent.gameObject;
-
-            playerInteraction = player.GetComponent<PlayerInteraction>();
-            playerInteraction.onUsePressed.AddListener(OnUse);
-
+            playerManager = GetComponentInParent<PlayerManager>();
             usables = new List<GameObject>();
         }
 
@@ -29,11 +27,11 @@ namespace Player
             }
         }
 
-        private void OnUse()
+        public void OnUse()
         {
             if(usables.Count == 0) return;
 
-            usables[usables.Count-1].GetComponent<IUsable>().Use(player);
+            usables[^1].GetComponent<IUsable>().Use(player);
         }
 
         private void OnTriggerExit2D(Collider2D other) {

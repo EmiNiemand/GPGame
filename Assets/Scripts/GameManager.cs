@@ -49,11 +49,11 @@ public class GameManager : MonoBehaviour
         //TODO: add game saving here
         if (savePoint.GetComponent<CheckPoints.SavePoint>() != null)
         {
-            savePoint.GetComponent<CheckPoints.SavePoint>().DeactivateEvent.Invoke();
+            savePoint.GetComponent<CheckPoints.SavePoint>().Deactivate();
         }
         savePoint = newSavePoint;
         FindObjectOfType<EnemiesManager>().respawnEnemiesEvent.Invoke();
-        savePoint.GetComponent<CheckPoints.SavePoint>().ActivateEvent.Invoke();
+        savePoint.GetComponent<CheckPoints.SavePoint>().Activate();
         respawnPoint = newSavePoint;
     }
 
