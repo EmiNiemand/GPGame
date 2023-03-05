@@ -17,7 +17,6 @@ namespace Enemies.Missiles
         {
             if (col.gameObject.CompareTag("Player"))
             {
-                Debug.Log("dupa");
                 col.gameObject.GetComponentInParent<PlayerCombat>().ReceiveDamage(damage, transform.position, knockbackForce);
                 GetComponent<Light2D>().enabled = false;
                 GetComponent<CircleCollider2D>().enabled = false;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vector2 = UnityEngine.Vector2;
@@ -231,6 +232,11 @@ namespace Player
             
             stateMachine.SetCurrentState(PlayerStates.Dodge);
             return true;
+        }
+
+        public void OnPauseUnpauseGame(InputAction.CallbackContext context)
+        {
+            if (context.started) GameObject.Find("_PauseMenuManager").GetComponent<PauseMenuUI>().pauseUnpause.Invoke();
         }
 
         public PlayerStates GetPlayerState()
