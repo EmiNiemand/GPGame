@@ -145,9 +145,9 @@ namespace Player
         {
             if (!context.started) return;
             if(pauseMenuUI.PauseUnpause())
-                GamepadHaptics.Pause();
+                gamepadHaptics.Pause();
             else
-                GamepadHaptics.Resume();
+                gamepadHaptics.Resume();
         }
 
         // Movement events

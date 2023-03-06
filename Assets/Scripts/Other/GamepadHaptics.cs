@@ -47,19 +47,18 @@ public class GamepadHaptics : MonoBehaviour
                 receivedDamage.strength - percentage));
     }
     
-    public static void Pause() { Gamepad.current.PauseHaptics(); }
-    public static void Resume() { Gamepad.current.ResumeHaptics(); }
+    public void Pause() { if(IsEnabled()) Gamepad.current.PauseHaptics(); }
+    public void Resume() { if(IsEnabled()) Gamepad.current.ResumeHaptics(); }
 
     private IEnumerator HapticCoroutine(float time, float leftMotor, float rightMotor)
     {
-        if (!enableHaptics) yield break;
+        if (!IsEnabled()) yield break;
 
-        if (Gamepad.current == null) yield break;
         Gamepad.current.SetMotorSpeeds(rightMotor, leftMotor);
         
         yield return new WaitForSeconds(time);
         
-        if (Gamepad.current == null) yield break; 
+        if (!IsEnabled()) yield break;
         Gamepad.current.SetMotorSpeeds(0, 0);
     }
 
@@ -83,6 +82,11 @@ public class GamepadHaptics : MonoBehaviour
 
     private void OnDestroy()
     {
-        Gamepad.current.ResetHaptics();
+        if(IsEnabled()) Gamepad.current.ResetHaptics();
+    }
+
+    private bool IsEnabled()
+    {
+        return enableHaptics && Gamepad.current is not null;
     }
 }
