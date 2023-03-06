@@ -5,10 +5,21 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    int HP { get; }
-    int maxHP { get; }
-
+    //TODO: think whether these two properties need to be there
+    // e.g.: some objects may be just one-hit destructable,
+    // playerCollisions class doesn't use them as anything meaningful;
+    // Maybe move them to another interface?
+    // [because these might be useful when implementing
+    // automated HP bar addition to object]
+    
+    // int HP { get; }
+    // int maxHP { get; }
+    
+    //TODO: might need to add some enum for damage type
+    // Let's say that some wall can be only destructed by 
+    // charging boar or fire, then we need to determine
+    // source of damage
     void ReceiveDamage(int damage, 
-                       Vector2 sourcePoint = new Vector2(), 
+                       Vector2 sourcePoint = default, 
                        int knockbackForce = 0);
 }

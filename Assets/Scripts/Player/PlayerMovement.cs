@@ -30,13 +30,23 @@ namespace Player
         [HideInInspector] public Vector2 previousPos;
 
         private PlayerStateMachine stateMachine;
+        private PlayerManager playerManager;
         
         [Header("Move")]
         public float moveSpeed;
         public float crouchMoveSpeed;
         [HideInInspector] public Vector2 moveDirection;
         [HideInInspector] public Vector2 direction;
-        [HideInInspector] public int lookingDirection = 1;
+        private int lookingDirectionValue = 1;
+        [HideInInspector] public int lookingDirection
+        {
+            get => lookingDirectionValue;
+            set
+            {
+                lookingDirectionValue = value;
+                playerManager.OnLookingDirectionChange(lookingDirectionValue);
+            }
+        }
         [HideInInspector] public int previousLookingDirection;
         
         [Header("Jump")]
@@ -88,6 +98,7 @@ namespace Player
         void Start()
         {
             stateMachine = gameObject.AddComponent<PlayerStateMachine>();
+            playerManager = GetComponent<PlayerManager>();
             rb2D = GetComponent<Rigidbody2D>();
             jumpCount = maxJumpCount;
             initGravityScale = rb2D.gravityScale;
@@ -146,68 +157,81 @@ namespace Player
             }
         }
 
-        // Player inputs
-        public void OnMove(InputAction.CallbackContext context)
+        // Player input handlers
+        // return true if action performed successfully
+        public bool Move(Vector2 inputVector)
         {
-            if(bBlockMovement) return;
-            moveDirection = new Vector2(context.ReadValue<Vector2>().x, 0);
-            direction = context.ReadValue<Vector2>();
+            if(bBlockMovement) return false;
+            
+            moveDirection = new Vector2(inputVector.x, 0);
+            direction = inputVector;
+            return true;
         }
 
-        public void OnJump(InputAction.CallbackContext context)
+        public bool Jump(bool actionStarted)
         {
-            if(bBlockMovement) return;
-            if (context.canceled) bIsJumping = false;
-            if (!(context.started && jumpCount > 0)) return;
+            if(bBlockMovement) return false;
+            
+            if (!actionStarted) bIsJumping = false;
+            if (!(actionStarted && jumpCount > 0)) return false;
+            
             bIsJumping = true;
-            if (stateMachine.CheckCurrentState(PlayerStates.Jump)) return;
+            
+            if (stateMachine.CheckCurrentState(PlayerStates.Jump)) return false;
             if (!stateMachine.CheckCurrentState(PlayerStates.Crouch))
             {
                 stateMachine.SetCurrentState(PlayerStates.Jump);
-                return;
+                return true;
             }
+            // Player can go directly from crouching to jumping
+            // if he has enough room above him
             bCanUncrouch = !Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x, 
                 initColliderSize.y / 2), Vector2.up, initColliderSize.y / 2 + 0.1f, "Environment");
-            if (bCanUncrouch) stateMachine.SetCurrentState(PlayerStates.Jump);
+            
+            if (!bCanUncrouch) return false;
+            stateMachine.SetCurrentState(PlayerStates.Jump);
+            return true;
         }
 
-        public void OnCrouch(InputAction.CallbackContext context)
+        public bool Crouch(bool actionStarted)
         {
-            if(bBlockMovement) return;
-            if (context.started && bIsGrounded)
+            if(bBlockMovement) return false;
+            
+            if (actionStarted && bIsGrounded)
             {
                 bUncrouch = false;
                 stateMachine.SetCurrentState(PlayerStates.Crouch);
             }
-            else if (context.canceled) bUncrouch = true;
+            else if (!actionStarted) bUncrouch = true;
+
+            return true;
         }
 
-        public void OnBoost(InputAction.CallbackContext context)
+        public bool Boost()
         {
-            if(bBlockMovement) return;
-            if (!context.started || !bIsBoostActivated) return;
-
+            if(bBlockMovement) return false;
+            if (!bIsBoostActivated) return false;
+            
+            // Check if there's enough place upwards to boost
             bCanBoost = !Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x - 0.2f, 
                 initColliderSize.y - 0.2f), Vector2.up, boostHeight, "Environment");
             if (bCanBoost && bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.Boost))
             {
                 stateMachine.SetCurrentState(PlayerStates.Boost);
             }
+
+            return true;
         }
 
-        public void OnDodge(InputAction.CallbackContext context)
+        public bool Dodge()
         {
-            if(bBlockMovement) return;
-            if (context.started && bCanDodge && !stateMachine.CheckCurrentState(PlayerStates.Jump) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Fall) && !stateMachine.CheckCurrentState(PlayerStates.Crouch))
-            {
-                stateMachine.SetCurrentState(PlayerStates.Dodge);
-            }
-        }
-
-        public void OnPauseUnpauseGame(InputAction.CallbackContext context)
-        {
-            if (context.started) GameObject.Find("_PauseMenuManager").GetComponent<PauseMenuUI>().pauseUnpause.Invoke();
+            if(bBlockMovement) return false;
+            if (!bCanDodge || stateMachine.CheckCurrentState(PlayerStates.Jump) ||
+                stateMachine.CheckCurrentState(PlayerStates.Fall) ||
+                stateMachine.CheckCurrentState(PlayerStates.Crouch)) return false;
+            
+            stateMachine.SetCurrentState(PlayerStates.Dodge);
+            return true;
         }
 
         public PlayerStates GetPlayerState()
@@ -223,6 +247,15 @@ namespace Player
         public float GetMoveSpeed()
         {
             return rb2D.velocity.x;
+        }
+
+        public void BlockMovement(bool block = true)
+        {
+            // if (bBlockMovement == block) return;
+            // bBlockMovement = block;
+            rb2D.constraints = block ? 
+                RigidbodyConstraints2D.FreezeAll : 
+                RigidbodyConstraints2D.FreezeRotation;
         }
 
         public void UnlockWallSlide()

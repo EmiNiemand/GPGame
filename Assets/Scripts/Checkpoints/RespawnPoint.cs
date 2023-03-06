@@ -4,15 +4,16 @@ using UnityEngine;
 
 namespace CheckPoints
 {
-    public class RespawnPoint : MonoBehaviour
+    public class RespawnPoint : MonoBehaviour, IUsable
     {
-        private void OnTriggerEnter2D(Collider2D collider)
+        public void OnEnter(GameObject user)
         {
-            if (collider != null && collider.CompareTag("Player"))
-            {
-                FindObjectOfType<GameManager>().respawnPointEvent.Invoke(gameObject);
-            }
+            FindObjectOfType<GameManager>().respawnPointEvent.Invoke(gameObject);
         }
+
+        public void OnExit(GameObject user) { }
+
+        public void Use(GameObject user) { }
     }
 }
 

@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace UI
@@ -14,19 +12,7 @@ namespace UI
         public GameObject pauseMenu;
         public GameObject pauseFirstButton;
 
-        [HideInInspector] public UnityEvent pauseUnpause;
-        
-        private void Start()
-        {
-            pauseUnpause.AddListener(PauseUnpause);
-        }
-        
-        public void OnPauseUnpause(InputAction.CallbackContext context)
-        {
-            if (context.started) PauseUnpause();
-        }
-
-        private void PauseUnpause()
+        public bool PauseUnpause()
         {
             if (!pauseMenu.activeInHierarchy)
             {
@@ -35,12 +21,12 @@ namespace UI
             
                 EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(pauseFirstButton);
+                return true;
             }
-            else
-            {
-                pauseMenu.SetActive(false);
-                Time.timeScale = 1f;
-            }
+            
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1f;
+            return false;
         }
 
         public void OnClickContinue()
