@@ -56,7 +56,6 @@ namespace Player
         }
     
         public void OnStep() {
-            Debug.Log("STEP");
             audioSource.Stop();
             audioSource.Play();
         }

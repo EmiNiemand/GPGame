@@ -234,11 +234,6 @@ namespace Player
             return true;
         }
 
-        public void OnPauseUnpauseGame(InputAction.CallbackContext context)
-        {
-            if (context.started) GameObject.Find("_PauseMenuManager").GetComponent<PauseMenuUI>().pauseUnpause.Invoke();
-        }
-
         public PlayerStates GetPlayerState()
         {
             return stateMachine.GetPlayerState();

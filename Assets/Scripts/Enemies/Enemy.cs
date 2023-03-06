@@ -110,7 +110,7 @@ namespace Enemies
             if (col.gameObject.layer == (int)Layers.Player)
             {
                 col.gameObject.GetComponent<IDamageable>().ReceiveDamage(
-                    damage, transform.position, knockbackForce);
+                    damage, col.GetContact(0).point, knockbackForce);
             }
         }
         

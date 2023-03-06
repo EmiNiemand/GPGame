@@ -15,7 +15,6 @@ namespace Player
 
         private Rigidbody2D rb2D;
         private Weapon weapon;
-        private PlayerMovement playerMovement;
         private PlayerManager playerManager;
 
         [SerializeField] private bool bIsCombatActivated = false;
@@ -28,7 +27,6 @@ namespace Player
         // Start is called before the first frame update
         void Start()
         {
-            playerMovement = GetComponent<PlayerMovement>();
             playerManager = GetComponent<PlayerManager>();
             weapon = GetComponentInChildren<Weapon>();
             rb2D = GetComponent<Rigidbody2D>();
@@ -44,6 +42,11 @@ namespace Player
                 playerManager.AttackStart();
             else if (!actionStarted) 
                 playerManager.AttackEnd();
+        }
+
+        public void OnWeaponHit(Vector2 hitPosition)
+        {
+            playerManager.OnWeaponHit(hitPosition);
         }
     
         public bool Heal(int value)
@@ -70,7 +73,7 @@ namespace Player
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
                 rb2D.AddForce(knockbackVector.normalized * knockbackForce);
             }
-            playerManager.OnReceiveDamage();
+            playerManager.OnReceiveDamage(sourcePoint);
         }
 
         private IEnumerator InvincibilityTime()
@@ -96,21 +99,24 @@ namespace Player
         public bool GetIsAttacking() { return bIsAttacking; }
         public void UnlockCombat() { bIsCombatActivated = true; }
 
+        public void UpdateState(PlayerStates newState)
+        {
+            playerState = newState;
+            weapon.UpdateState(newState);
+        }
+        
         // Pass-through methods called from animations
         // -------------------------------------------
-        public void AttackDamageStart(AttackType attackType)
-        {
-            weapon.StartAttack(attackType);
-        }
+        public void AttackDamageStart(AttackType attackType) { weapon.StartAttack(attackType); }
         public void AttackDamageEnd() { weapon.EndAttack(); }
 
-        public void UpdateState(PlayerStates newState) { playerState = newState; }
+        public void UpdateMovingDirection(Vector2 direction) { weapon.UpdateMovingDirection(direction); }
+        public void UpdateLookingDirection(int lookingDirection) { weapon.UpdateLookingDirection(lookingDirection); }
 
         private bool CanAttackState()
         {
             return System.Array.BinarySearch(
-                statesBlockingAttack, 
-                playerMovement.GetPlayerState()) < 0;
+                statesBlockingAttack, playerState) < 0;
         }
     }
 }
