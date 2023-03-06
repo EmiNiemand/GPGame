@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Spikes : Trap
 {
-    public float knockbackForce = 10;
+    public int knockbackForce = 10;
     
     // Start is called before the first frame update
     void Start()
@@ -16,7 +16,8 @@ public class Spikes : Trap
     protected override void Attack(GameObject other)
     {
         //TODO: temporary workaround
+        //TODO: will only work properly if spikes are placed horizontally 
         other.GetComponentInParent<IDamageable>().ReceiveDamage(
-            damage, GetComponent<Collider2D>().ClosestPoint(other.transform.position), 10);
+            damage, other.transform.position - new Vector3(0, 5), knockbackForce);
     }
 }

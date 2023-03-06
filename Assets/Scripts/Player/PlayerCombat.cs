@@ -62,6 +62,8 @@ namespace Player
             if (!bIsVulnerable || bIsInvincible) return;
             StartCoroutine(InvincibilityTime());
 
+            // Debug.Log("Player position: " + transform.position + "\t\tSource point: " + sourcePoint + "\t\tKnockback: " + knockbackForce);
+
             HP -= damage;
             
             if (HP <= 0)
@@ -72,6 +74,7 @@ namespace Player
             {
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
                 rb2D.AddForce(knockbackVector.normalized * knockbackForce);
+                Debug.Log(knockbackVector.normalized * knockbackForce);
             }
             playerManager.OnReceiveDamage(sourcePoint);
         }
