@@ -30,10 +30,13 @@ namespace Player
         }
 
         private float attackTimeCounter;
-        private static readonly int AttackHash = Animator.StringToHash("Attack");
+        //TODO: turn this into a dictionary
+        private static readonly int WalkAttackHash = Animator.StringToHash("AttackWalk");
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int ReceiveDamageHash = Animator.StringToHash("ReceiveDamage");
         private static readonly int AttackLightHash = Animator.StringToHash("AttackLight");
+        private static readonly int UpAttackHash = Animator.StringToHash("AttackUp");
+        private static readonly int DownAttack = Animator.StringToHash("AttackDown");
 
         // Update is called once per frame
         void Update()
@@ -42,9 +45,20 @@ namespace Player
             playerAnimator.SetFloat(SpeedHash, Mathf.Abs(moveSpeed/5));
         }
 
-        public void AttackStart()
+        public void AttackStart(Weapon.LookingDirection direction)
         {
-            playerAnimator.SetTrigger(AttackHash);
+            switch (direction)
+            {
+                case Weapon.LookingDirection.Up when currentState is PlayerStates.Idle or PlayerStates.Move or PlayerStates.Jump or PlayerStates.Fall:
+                    playerAnimator.SetTrigger(UpAttackHash); break;
+                case Weapon.LookingDirection.Down when currentState is PlayerStates.Jump or PlayerStates.Fall:
+                    playerAnimator.SetTrigger(DownAttack); break;
+                case Weapon.LookingDirection.Left when currentState is PlayerStates.Idle or PlayerStates.Move:
+                case Weapon.LookingDirection.Right when currentState is PlayerStates.Idle or PlayerStates.Move:
+                    playerAnimator.SetTrigger(WalkAttackHash); break;
+                default: break;
+            }
+            
             attackTimeCounter = Time.time;
         }
 

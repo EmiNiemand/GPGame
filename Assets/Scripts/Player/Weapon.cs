@@ -7,7 +7,7 @@ using UnityEngine.U2D;
 
 public class Weapon : MonoBehaviour
 {
-    enum LookingDirection
+    public enum LookingDirection
     {
         Left=0,
         Up=1,
@@ -15,6 +15,9 @@ public class Weapon : MonoBehaviour
         Down=3
     }
 
+    // this probably should be implemented by player combat
+    // considering the fact, that weapon itself is heavily
+    // controlled by animations
     [SerializeField] private float attackCooldown;
     [SerializeField] private int lightDamage;
     [SerializeField] private int heavyDamage;
@@ -26,8 +29,9 @@ public class Weapon : MonoBehaviour
 
     private bool bIsAttackOnCooldown = false;
     private AttackType currentAttack;
-    private LookingDirection lookingDirection;
-    
+    // this should probably be moved to player combat as well
+    [HideInInspector] public LookingDirection lookingDirection;
+
     private PlayerStates playerState;
     private Vector2 playerMovingDirection;
     private int playerLookingDirection;
@@ -91,7 +95,7 @@ public class Weapon : MonoBehaviour
             int knockValue = currentAttack == AttackType.Light ? knockbackForce / 4 : knockbackForce;
             Vector2 position = transform.parent.transform.position;
             damageable.ReceiveDamage(damageValue, position, knockValue);
-            playerCombat.OnWeaponHit(collision.ClosestPoint(transform.position));
+            playerCombat.OnWeaponHit(collision.transform.position);
         }
     }
     

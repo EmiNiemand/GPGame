@@ -36,12 +36,17 @@ namespace Player
     
         public void OnAttack(bool actionStarted)
         {
-            if (actionStarted && 
-                bIsCombatActivated &&
-                CanAttackState())
-                playerManager.AttackStart();
-            else if (!actionStarted) 
-                playerManager.AttackEnd();
+            if (!bIsCombatActivated) return;
+            
+            
+
+            switch (actionStarted)
+            {
+                case true when CanAttackState():
+                    playerManager.AttackStart(weapon.lookingDirection); break;
+                case false:
+                    playerManager.AttackEnd(); break;
+            }
         }
 
         public void OnWeaponHit(Vector2 hitPosition)
@@ -94,12 +99,7 @@ namespace Player
             playerManager.OnDeath();
         }
     
-        public void SetPlayerVulnerable(bool bVulnerability)
-        {
-            bIsVulnerable = bVulnerability;
-        }
-    
-        public bool GetIsAttacking() { return bIsAttacking; }
+        public void SetPlayerVulnerable(bool bVulnerability) { bIsVulnerable = bVulnerability; }
         public void UnlockCombat() { bIsCombatActivated = true; }
 
         public void UpdateState(PlayerStates newState)

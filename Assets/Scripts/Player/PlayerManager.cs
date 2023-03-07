@@ -67,9 +67,9 @@ namespace Player
         #endregion
         
         #region Combat Events
-        public void AttackStart()
+        public void AttackStart(Weapon.LookingDirection direction)
         {
-            playerAnimations.AttackStart();
+            playerAnimations.AttackStart(direction);
         }
 
         public void AttackEnd()
