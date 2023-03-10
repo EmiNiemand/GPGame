@@ -30,7 +30,7 @@ public class Weapon : MonoBehaviour
     private bool bIsAttackOnCooldown = false;
     private AttackType currentAttack;
     // this should probably be moved to player combat as well
-    [HideInInspector] public LookingDirection lookingDirection;
+    public LookingDirection lookingDirection;
 
     private PlayerStates playerState;
     private Vector2 playerMovingDirection;
@@ -105,7 +105,7 @@ public class Weapon : MonoBehaviour
 
     // Helper methods
     // --------------
-    private void GetLookingDirection()
+    public LookingDirection GetLookingDirection()
     {
         Vector2 direction = playerMovingDirection;
         int lookDirection = playerLookingDirection;
@@ -126,5 +126,7 @@ public class Weapon : MonoBehaviour
         {
             lookingDirection = LookingDirection.Right;
         }
+
+        return lookingDirection;
     }
 }

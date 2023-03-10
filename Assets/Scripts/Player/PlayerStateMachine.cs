@@ -13,6 +13,7 @@ namespace Player
         
         private float jumpTime = 0.1f;
         private float jumpTimeCounter;
+        //TODO: bNormalJump might be leftover variable from testing various types of jump; might be fine to delete
         private bool bNormalJump = false;
         
         private float dodgeDirection = 1;
@@ -51,21 +52,15 @@ namespace Player
                 playerManager.OnStateChange(currentState);
             }
         }
-        public PlayerStates GetPlayerState()
-        {
-            return currentState;
-        }
+        
+        #region Player State checkers and getters
+        public PlayerStates GetPlayerState() { return currentState; }
+        public bool CheckCurrentState(PlayerStates state) { return currentState == state; }
+        public bool CheckPreviousState(PlayerStates state) { return previousState == state; }
+        
+        #endregion
 
-        public bool CheckCurrentState(PlayerStates state)
-        {
-            return currentState == state;
-        }
-
-        public bool CheckPreviousState(PlayerStates state)
-        {
-            return previousState == state;
-        }
-
+        #region Entering, Staying in and Exiting State
         private void OnEnterState(PlayerStates state)
         {
             switch (state)
@@ -86,8 +81,8 @@ namespace Player
                     }
                     else if (previousState == PlayerStates.LedgeGrab)
                     {
-                        if ((playerMovement.moveDirection.x > 0 && playerMovement.lookingDirection < 0) || 
-                            (playerMovement.moveDirection.x < 0 && playerMovement.lookingDirection > 0))
+                        // When moveDirection is on the opposite site of lookingDirection
+                        if (playerMovement.moveDirection.x * playerMovement.lookingDirection < 0)
                         {
                             StartCoroutine(WallSlideCooldown());
                             StartCoroutine(BlockInput());
@@ -152,8 +147,11 @@ namespace Player
 
         private void OnStayState()
         {
+            // Add force to Player during horizontal movement and Dodge
+            // --------------------------------------------------------
             if (currentState != PlayerStates.WallSlide && currentState != PlayerStates.Boost && currentState != PlayerStates.Crouch && bCanMove)
             {
+                // Dodge "locks" Player's direction until the end of state
                 if (currentState == PlayerStates.Dodge)
                 {
                     playerMovement.rb2D.AddForce(new Vector2(dodgeDirection, 0) * playerMovement.moveSpeed, ForceMode2D.Impulse);
@@ -167,6 +165,8 @@ namespace Player
             switch (currentState)
             {
                 case PlayerStates.Move:
+                    // Push Player onto platform if he's stuck at the edge
+                    // ---------------------------------------------------
                     if (playerMovement.previousLookingDirection == playerMovement.lookingDirection && 
                         playerMovement.previousPos == new Vector2(transform.position.x, transform.position.y) && 
                         !Utils.ShootBoxcast(playerMovement.transform.position, 
@@ -176,14 +176,19 @@ namespace Player
                     {
                         playerMovement.rb2D.AddForce(Vector2.up * 2.5f, ForceMode2D.Impulse);
                     }
+                    
                     playerMovement.previousPos = playerMovement.transform.position;
                     playerMovement.previousLookingDirection = playerMovement.lookingDirection;
                     break;
                 case PlayerStates.Fall:
+                    // Push Player onto platform if he's stuck at the edge
+                    // ---------------------------------------------------
                     if (playerMovement.rb2D.velocity.y == 0)
                     {
                         playerMovement.rb2D.AddForce(Vector2.up * 2.5f, ForceMode2D.Impulse);
                     }
+                    // Speed up player's fall to make it feel more snappy
+                    // --------------------------------------------------
                     else
                     {
                         playerMovement.rb2D.AddForce(Vector2.down * playerMovement.additionalFallingForce, ForceMode2D.Impulse);
@@ -194,7 +199,6 @@ namespace Player
                     {
                         if (jumpTimeCounter > 0 && playerMovement.bIsJumping)
                         {
-                            
                             playerMovement.rb2D.AddForce(Vector2.up * playerMovement.jumpForce / 10, ForceMode2D.Impulse);
                             jumpTimeCounter -= Time.deltaTime;
                         }
@@ -218,12 +222,19 @@ namespace Player
                     if (playerMovement.direction.y <= -0.5) SetCurrentState(PlayerStates.Fall);
                     break;
                 case PlayerStates.WallSlide:
+                    //TODO: check if player can LedgeGrab
+                    // while WallSliding player can go a little bit up,
+                    // which may make it possible to reach a ledge
+                    
+                    // Player slided to the ground from wall or cancelled WallSlide
                     if (!playerMovement.bCanWallSlide || playerMovement.direction.y <= -0.5 || playerMovement.bIsGrounded) SetCurrentState(PlayerStates.Fall);
+                    // Check whether player still collides with wall
                     playerMovement.bCanWallSlide = Utils.ShootBoxcast(playerMovement.transform.position, 
                         new Vector2(0.2f, playerMovement.initColliderSize.y / 4), Vector2.right * playerMovement.lookingDirection, 
                         playerMovement.initColliderSize.x / 2 + 0.2f, "Environment");
                     break;
                 case PlayerStates.LedgeGrab:
+                    // Player cancelled ledge grab
                     if(playerMovement.direction.y <= -0.5f) SetCurrentState(PlayerStates.Fall);
                     break;
                 default: break;
@@ -262,30 +273,44 @@ namespace Player
                 default: break;
             }
         }
-        
+        #endregion
+
+        #region States coroutines
          private IEnumerator Dodge()
         {
             playerMovement.bCanDodge = false;
             PlayerCombat combat = GetComponent<PlayerCombat>();
             combat.SetPlayerVulnerable(false);
             playerMovement.rb2D.velocity = new Vector2(dodgeDirection * playerMovement.dodgeForce, playerMovement.rb2D.velocity.y);
+
+            // Slow down Player's fall during dashing from boost 
+            if (previousState is PlayerStates.Boost) playerMovement.rb2D.gravityScale *= 0.5f; 
             yield return new WaitForSeconds(playerMovement.dodgeTime);
+            if (previousState is PlayerStates.Boost) playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
+            
             combat.SetPlayerVulnerable(true);
+            
+            // Check clearance above Player and whether he collides with wall
+            // --------------------------------------------------------------
             playerMovement.bCanUncrouch = !Utils.ShootBoxcast(playerMovement.transform.position, 
                 new Vector2(playerMovement.initColliderSize.x - 0.1f, playerMovement.initColliderSize.y / 2), 
                 Vector2.up, playerMovement.initColliderSize.y / 2 + 0.1f, "Environment");
             playerMovement.bCanWallSlide = Utils.ShootBoxcast(playerMovement.transform.position, 
                 new Vector2(0.2f, playerMovement.initColliderSize.y / 4), 
                 Vector2.right * playerMovement.lookingDirection, playerMovement.initColliderSize.x / 2 + 0.2f, "Environment");
+            // Force Player to crouch if there's not enough space above him
+            // ------------------------------------------------------------
             if (!playerMovement.bCanUncrouch)
             {
                 playerMovement.bUncrouch = true;
                 SetCurrentState(PlayerStates.Crouch);
             }
+            // From Dodge player can either Boost, WallSlide, Walk or Fall
+            // -----------------------------------------------------------
             else if (currentState == PlayerStates.Boost) SetCurrentState(PlayerStates.Boost);
             else if (playerMovement.bIsGrounded == false && playerMovement.bCanWallSlide) SetCurrentState(PlayerStates.WallSlide);
-            else if (playerMovement.bCanUncrouch && playerMovement.bIsGrounded && playerMovement.moveDirection == Vector2.zero) SetCurrentState(PlayerStates.Idle);
-            else if (playerMovement.bCanUncrouch && playerMovement.bIsGrounded && playerMovement.moveDirection != Vector2.zero) SetCurrentState(PlayerStates.Move);
+            else if (playerMovement.bCanUncrouch && playerMovement.bIsGrounded)
+                SetCurrentState(playerMovement.moveDirection == Vector2.zero ? PlayerStates.Idle : PlayerStates.Move);
             else SetCurrentState(PlayerStates.Fall);
             yield return new WaitForSeconds(playerMovement.dodgeCooldown);
             playerMovement.bCanDodge = true;
@@ -293,32 +318,17 @@ namespace Player
 
         private IEnumerator Boost()
         {
-            var destination = new Vector2(playerMovement.transform.position.x, playerMovement.transform.position.y + playerMovement.boostHeight);
-            if (currentState == PlayerStates.Boost)
-            {
-                playerMovement.rb2D.gravityScale = 0;
-            }
+            // Move player to configured height
+            // --------------------------------
+            var destination = (Vector2)playerMovement.transform.position + new Vector2(0, playerMovement.boostHeight);
+            if (currentState == PlayerStates.Boost) playerMovement.rb2D.gravityScale = 0;
+            
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Boost, playerMovement.boostSpeed, 0.5f));
             yield return StartCoroutine(Wait(playerMovement.boostTime, PlayerStates.Boost));
+            
+            // Make Player fall if he's been boosting for too long
+            // ---------------------------------------------------
             if (currentState == PlayerStates.Boost) SetCurrentState(PlayerStates.Fall);
-        }
-
-        private IEnumerator Wait(float time, PlayerStates state)
-        {
-            float timePassed = 0;
-
-            while (timePassed < time)
-            {
-                if (currentState != state) break;
-                    timePassed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        private bool IsOnPosition(Vector2 destination, PlayerStates state, float speed, float precision)
-        {
-            transform.position = Vector2.MoveTowards(playerMovement.transform.position, destination, speed);
-            return Vector2.Distance(playerMovement.transform.position, destination) < precision || currentState != state;
         }
 
         private IEnumerator LedgeClimb()
@@ -326,23 +336,31 @@ namespace Player
             playerMovement.bBlockMovement = true;
             bBlockState = true;
             
-            playerMovement.rb2D.gravityScale = 0;
+            // Block physics simulation during LedgeClimb to prevent bugs
             playerMovement.rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             
-            var destination = new Vector2(playerMovement.transform.position.x, 
-                playerMovement.transform.position.y + playerMovement.initColliderSize.y);
+            // Move Player up
+            // --------------
+            var destination = (Vector2)playerMovement.transform.position + 
+                              new Vector2(0, playerMovement.initColliderSize.y);
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
-            destination = new Vector2(playerMovement.transform.position.x + playerMovement.initColliderSize.x * playerMovement.lookingDirection, 
-                playerMovement.transform.position.y);
+            
+            // Move Player to the side, above platform
+            // ---------------------------------------
+            destination = (Vector2)playerMovement.transform.position + 
+                          new Vector2(playerMovement.initColliderSize.x * playerMovement.lookingDirection, 0);
             yield return new WaitUntil(() => IsOnPosition(destination, PlayerStates.Jump, playerMovement.ledgeClimbSpeed, 0.1f));
 
-            playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
+            // Restore physics simulation
             playerMovement.rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 
             playerMovement.bBlockMovement = false;
             bBlockState = false;
         }
         
+        #endregion
+        
+        #region Other coroutines
         private IEnumerator WallSlideCooldown()
         {
             playerMovement.bIsWallSlideOnCooldown = true;
@@ -369,5 +387,27 @@ namespace Player
             yield return new WaitForSeconds(playerMovement.blockInputTimer);
             bCanMove = true;
         }
+        #endregion
+        
+        #region Coroutines helper methods
+        private bool IsOnPosition(Vector2 destination, PlayerStates state, float speed, float precision)
+        {
+            var position = playerMovement.transform.position;
+            
+            transform.position = Vector2.MoveTowards(position, destination, speed);
+            return Vector2.Distance(position, destination) < precision || currentState != state;
+        }
+        private IEnumerator Wait(float time, PlayerStates state)
+        {
+            float timePassed = 0;
+
+            while (timePassed < time)
+            {
+                if (currentState != state) break;
+                timePassed += Time.deltaTime;
+                yield return null;
+            }
+        }
+        #endregion
     }
 }
