@@ -144,10 +144,21 @@ namespace Player
         public void OnPauseUnpauseGame(InputAction.CallbackContext context)
         {
             if (!context.started) return;
+            PauseGame();
+        }
+
+        private void PauseGame()
+        {
             if(pauseMenuUI.PauseUnpause())
+            {
                 gamepadHaptics.Pause();
+                playerMovement.bBlockMovement = true;
+            }
             else
+            {
                 gamepadHaptics.Resume();
+                playerMovement.bBlockMovement = false;
+            }
         }
 
         // Movement events
@@ -172,6 +183,9 @@ namespace Player
         public void OnCrouch(InputAction.CallbackContext context)
         {
             if (!(context.started || context.canceled)) return;
+            
+            if(pauseMenuUI.activated) { PauseGame(); }
+            
             playerMovement.Crouch(context.started);
             //TODO: maybe invoke event in camera
             //that after x seconds moves it down a bit

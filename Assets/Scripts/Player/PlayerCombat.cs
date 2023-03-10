@@ -72,15 +72,12 @@ namespace Player
 
             HP -= damage;
             
-            if (HP <= 0)
-            {
-                OnDeath();
-            }
-            else if(knockbackForce != 0)
+            if (HP <= 0) { OnDeath(); return; }
+            
+            if(knockbackForce != 0)
             {
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
                 rb2D.AddForce(knockbackVector.normalized * knockbackForce);
-                Debug.Log(knockbackVector.normalized * knockbackForce);
             }
             playerManager.OnReceiveDamage(sourcePoint);
         }
