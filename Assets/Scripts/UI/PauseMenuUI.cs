@@ -11,11 +11,13 @@ namespace UI
     {
         public GameObject pauseMenu;
         public GameObject pauseFirstButton;
+        public bool activated = false;
 
         public bool PauseUnpause()
         {
             if (!pauseMenu.activeInHierarchy)
             {
+                activated = true;
                 pauseMenu.SetActive(true);
                 Time.timeScale = 0f;
             
@@ -25,6 +27,7 @@ namespace UI
             }
             
             pauseMenu.SetActive(false);
+            activated = false;
             Time.timeScale = 1f;
             return false;
         }
@@ -37,6 +40,7 @@ namespace UI
         public void OnClickReturn()
         {
             SceneManager.LoadScene("Scenes/MainMenu");
+            Time.timeScale = 1f;
         }
         
         public void OnClickQuit()

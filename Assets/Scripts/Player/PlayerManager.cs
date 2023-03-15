@@ -71,9 +71,9 @@ namespace Player
         #endregion
         
         #region Combat Events
-        public void AttackStart()
+        public void AttackStart(Weapon.LookingDirection direction)
         {
-            animations.AttackStart();
+            animations.AttackStart(direction);
         }
 
         public void AttackEnd()
@@ -151,17 +151,28 @@ namespace Player
         public void OnPauseUnpauseGame(InputAction.CallbackContext context)
         {
             if (!context.started) return;
+            PauseGame();
+        }
+
+        private void PauseGame()
+        {
             if(pauseMenuUI.PauseUnpause())
+            {
                 gamepadHaptics.Pause();
+                movement.bBlockMovement = true;
+            }
             else
+            {
                 gamepadHaptics.Resume();
+                movement.bBlockMovement = false;
+            }
         }
 
         // Movement events
         // ---------------
         public void OnMove(InputAction.CallbackContext context)
         {
-            //TODO
+            //TODO: make player look up or down after a few seconds of holding button
             if(!movement.Move(context.ReadValue<Vector2>())) return;
             
             animations.UpdateMovingDirection(movement.direction.x);
@@ -180,6 +191,9 @@ namespace Player
         public void OnCrouch(InputAction.CallbackContext context)
         {
             if (!(context.started || context.canceled)) return;
+            
+            if(pauseMenuUI.activated) { PauseGame(); }
+            
             movement.Crouch(context.started);
             //TODO: maybe invoke event in camera
             //that after x seconds moves it down a bit

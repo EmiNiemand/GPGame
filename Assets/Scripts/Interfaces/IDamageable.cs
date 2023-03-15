@@ -1,8 +1,11 @@
 using UnityEngine;
 /// <summary>
 ///     Any other object can damage object implementing this interface
+///     <br/><br/>
+///     ! IMPORTANT ! <br/>
+///     You need to multiply <b>knockbackForce</b> of an object by <b>Utils.KnockbackMult</b>.
+///     Only then you get reasonable numbers to scale knockback by (~10 is good).
 ///</summary>
-
 public interface IDamageable
 {
     //TODO: think whether these two properties need to be there

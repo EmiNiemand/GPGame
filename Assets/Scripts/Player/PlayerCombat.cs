@@ -12,6 +12,7 @@ namespace Player
         [field: SerializeField] public int maxHP { get; protected set; }
         public int HP { get; protected set; }
         public float invincibilityTime = 1.0f;
+        public float cooldownTime = 1.0f;
 
         private Rigidbody2D rb2D;
         private Weapon weapon;
@@ -21,6 +22,7 @@ namespace Player
         private bool bIsVulnerable = true;
         private bool bIsInvincible = false;
         private bool bIsAttacking = false;
+        private bool bIsOnCooldown = false;
         private PlayerStates playerState;
         private readonly PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch, PlayerStates.Dodge };
 
@@ -36,12 +38,16 @@ namespace Player
     
         public void OnAttack(bool actionStarted)
         {
-            if (actionStarted && 
-                bIsCombatActivated &&
-                CanAttackState())
-                playerManager.AttackStart();
-            else if (!actionStarted) 
-                playerManager.AttackEnd();
+            if (!bIsCombatActivated) return;
+
+            switch (actionStarted)
+            {
+                case true when CanAttackState() && !bIsOnCooldown:
+                    playerManager.AttackStart(weapon.GetLookingDirection());
+                    bIsOnCooldown = true; break;
+                case false:
+                    playerManager.AttackEnd(); break;
+            }
         }
 
         public void OnWeaponHit(Vector2 hitPosition)
@@ -66,11 +72,9 @@ namespace Player
 
             HP -= damage;
             
-            if (HP <= 0)
-            {
-                OnDeath();
-            }
-            else if(knockbackForce != 0)
+            if (HP <= 0) { OnDeath(); return; }
+            
+            if(knockbackForce != 0)
             {
                 rb2D.velocity = Vector2.zero;
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
@@ -85,6 +89,17 @@ namespace Player
             yield return new WaitForSeconds(invincibilityTime);
             bIsInvincible = false;
         }
+
+        //TODO: find better solution
+        private bool cooldownRunning = false;
+        private IEnumerator CooldownTime()
+        {
+            if (cooldownRunning) yield break;
+            cooldownRunning = true;
+            yield return new WaitForSeconds(cooldownTime);
+            bIsOnCooldown = false;
+            cooldownRunning = false;
+        }
     
         private void OnDeath()
         {
@@ -94,12 +109,7 @@ namespace Player
             playerManager.OnDeath();
         }
     
-        public void SetPlayerVulnerable(bool bVulnerability)
-        {
-            bIsVulnerable = bVulnerability;
-        }
-    
-        public bool GetIsAttacking() { return bIsAttacking; }
+        public void SetPlayerVulnerable(bool bVulnerability) { bIsVulnerable = bVulnerability; }
         public void UnlockCombat() { bIsCombatActivated = true; }
 
         public void UpdateState(PlayerStates newState)
@@ -111,7 +121,7 @@ namespace Player
         // Pass-through methods called from animations
         // -------------------------------------------
         public void AttackDamageStart(AttackType attackType) { weapon.StartAttack(attackType); }
-        public void AttackDamageEnd() { weapon.EndAttack(); }
+        public void AttackDamageEnd() { weapon.EndAttack(); StartCoroutine(CooldownTime()); }
 
         public void UpdateMovingDirection(Vector2 direction) { weapon.UpdateMovingDirection(direction); }
         public void UpdateLookingDirection(int lookingDirection) { weapon.UpdateLookingDirection(lookingDirection); }

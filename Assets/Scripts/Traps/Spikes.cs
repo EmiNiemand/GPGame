@@ -16,8 +16,17 @@ public class Spikes : Trap
 
     protected override void Attack(GameObject other)
     {
-        //TODO: temporary workaround
-        //TODO: will only work properly if spikes are placed horizontally 
+        // var filter = new ContactFilter2D
+        // {
+        //     useLayerMask = true, layerMask = (int)Layers.Player
+        // };
+        // var contactPoints = new List<ContactPoint2D>();
+        // GetComponent<CompositeCollider2D>().GetContacts(filter, contactPoints);
+        
+        //TODO: will only work on Player
+        //TODO: will only work properly if spikes are placed horizontally
+
+        //TODO: implement IDamageable in PlayerColliders
         other.GetComponentInParent<IDamageable>().ReceiveDamage(
             damage, other.transform.position - new Vector3(0, 5), knockbackForce);
     }

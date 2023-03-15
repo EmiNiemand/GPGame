@@ -24,6 +24,8 @@ public class GamepadHaptics : MonoBehaviour
 
     public void SuccessfullyAttacked(Vector2 sourcePoint)
     {
+        //TODO: test it out because sometimes it may bug out and get percentage
+        //for somewhere in between boundaries [????]
         var percentage = Mathf.Round(GetLeftRightPercentage(transform.position.x, sourcePoint.x));
         StartCoroutine(HapticCoroutine(
             successfulAttack.time,

@@ -30,10 +30,13 @@ namespace Player
         }
 
         private float attackTimeCounter;
-        private static readonly int AttackHash = Animator.StringToHash("Attack");
+        //TODO: turn this into a dictionary
+        private static readonly int WalkAttackHash = Animator.StringToHash("AttackWalk");
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int ReceiveDamageHash = Animator.StringToHash("ReceiveDamage");
         private static readonly int AttackLightHash = Animator.StringToHash("AttackLight");
+        private static readonly int UpAttackHash = Animator.StringToHash("AttackUp");
+        private static readonly int DownAttack = Animator.StringToHash("AttackDown");
 
         // Update is called once per frame
         void Update()
@@ -42,16 +45,29 @@ namespace Player
             playerAnimator.SetFloat(SpeedHash, Mathf.Abs(moveSpeed/5));
         }
 
-        public void AttackStart()
+        public void AttackStart(Weapon.LookingDirection direction)
         {
-            playerAnimator.SetTrigger(AttackHash);
+            Debug.Log(currentState);
+            
+            switch (direction)
+            {
+                case Weapon.LookingDirection.Up when currentState is PlayerStates.Idle or PlayerStates.Move or PlayerStates.Jump or PlayerStates.Fall:
+                    playerAnimator.SetTrigger(UpAttackHash); break;
+                case Weapon.LookingDirection.Down when currentState is PlayerStates.Jump or PlayerStates.Fall:
+                    playerAnimator.SetTrigger(DownAttack); break;
+                case Weapon.LookingDirection.Left when currentState is PlayerStates.Idle or PlayerStates.Move or PlayerStates.Jump or PlayerStates.Fall:
+                case Weapon.LookingDirection.Right when currentState is PlayerStates.Idle or PlayerStates.Move or PlayerStates.Jump or PlayerStates.Fall:
+                    playerAnimator.SetTrigger(WalkAttackHash); break;
+                default: break;
+            }
+            
             attackTimeCounter = Time.time;
         }
 
         public void AttackEnd()
         {
             var timeDelta = Time.time - attackTimeCounter;
-            if(timeDelta < 0.2f)
+            if(timeDelta < 0.2f || currentState is not (PlayerStates.Idle or PlayerStates.Move))
                 playerAnimator.SetTrigger(AttackLightHash);
         }
 
@@ -83,6 +99,11 @@ namespace Player
             // Some triggers (Jump, Fall) stay activated for longer than action actually takes place
             playerAnimator.ResetTrigger(previousState.ToString());
             playerAnimator.SetTrigger(currentState.ToString());
+            
+            //TODO: improve this sheet
+            // Workaround for movement freeze on heavy attack
+            // ----------------------------------------------
+            if (currentState is PlayerStates.Boost or PlayerStates.Dodge) { AE_MovementStart(); AE_AttackDamageEnd();}
 
             // Scale collider down when crouching
             // ----------------------------------
