@@ -8,12 +8,13 @@ namespace Player
 {
     public class PlayerManager : MonoBehaviour
     {
-        private PlayerAnimations playerAnimations;
-        private PlayerCombat playerCombat;
-        private PlayerSFX playerSfx;
-        private PlayerStateMachine playerStateMachine;
-        private PlayerMovement playerMovement;
-        private PlayerCollisions playerCollisions;
+        private PlayerAnimations animations;
+        private PlayerCombat combat;
+        private PlayerSFX sfx;
+        private PlayerStateMachine stateMachine;
+        private PlayerMovement movement;
+        private PlayerCollisions collisions;
+        private PlayerCameraEffects cameraEffects;
         
         private GamepadHaptics gamepadHaptics;
         private GameUI gameUI;
@@ -22,19 +23,22 @@ namespace Player
         // Start is called before the first frame update
         void Start()
         {
-            playerAnimations = GetComponentInChildren<PlayerAnimations>();
-            playerSfx = GetComponent<PlayerSFX>();
-            playerStateMachine = GetComponent<PlayerStateMachine>();
-            playerMovement = GetComponent<PlayerMovement>();
-            playerCollisions = GetComponentInChildren<PlayerCollisions>();
-            playerCombat = GetComponent<PlayerCombat>();
+            animations = GetComponentInChildren<PlayerAnimations>();
+            sfx = GetComponent<PlayerSFX>();
+            stateMachine = GetComponent<PlayerStateMachine>();
+            movement = GetComponent<PlayerMovement>();
+            collisions = GetComponentInChildren<PlayerCollisions>();
+            combat = GetComponent<PlayerCombat>();
+            cameraEffects = GetComponent<PlayerCameraEffects>();
             
             gamepadHaptics = GetComponent<GamepadHaptics>();
-            gamepadHaptics.SetPlayerWidth(playerCollisions.gameObject.GetComponent<Collider2D>().bounds.size.x);
+            gamepadHaptics.SetPlayerWidth(
+                collisions.gameObject.GetComponent<Collider2D>()
+                    .bounds.size.x);
 
             gameUI = FindObjectOfType<GameUI>();
             gameUI.Setup();
-            gameUI.SetMaxHealth(playerCombat.maxHP);
+            gameUI.SetMaxHealth(combat.maxHP);
 
             pauseMenuUI = GameObject.Find("_PauseMenuManager").GetComponent<PauseMenuUI>();
         }
@@ -44,59 +48,61 @@ namespace Player
         {
             //make coroutine to play death animation or smth
             FindObjectOfType<GameManager>().respawnEvent.Invoke();
-            gameUI.UpdateHealth(playerCombat.HP);
+            gameUI.UpdateHealth(combat.HP);
         }
         #endregion
         
         #region Movement Events
         public void MovementFreeze(bool freeze = true)
         {
-            playerMovement.BlockMovement(freeze);
+            movement.BlockMovement(freeze);
         }
 
         public void OnLookingDirectionChange(int newDirection)
         {
-            playerAnimations.UpdateLookingDirection(newDirection);
-            playerCombat.UpdateLookingDirection(newDirection);
+            animations.UpdateLookingDirection(newDirection);
+            combat.UpdateLookingDirection(newDirection);
         }
 
         public float GetMoveSpeed()
         {
-            return playerMovement.GetMoveSpeed();
+            return movement.GetMoveSpeed();
         }
         #endregion
         
         #region Combat Events
         public void AttackStart()
         {
-            playerAnimations.AttackStart();
+            animations.AttackStart();
         }
 
         public void AttackEnd()
         {
-            playerAnimations.AttackEnd();
+            animations.AttackEnd();
         }
         #endregion
         
         #region Collision Events
         public void Heal(int value)
         {
-            if(!playerCombat.Heal(value)) return;
+            if(!combat.Heal(value)) return;
             
-            gameUI.UpdateHealth(playerCombat.HP);
+            gameUI.UpdateHealth(combat.HP);
         }
         
         public void OnReceiveDamage(Vector2 sourcePoint)
         {
-            gameUI.UpdateHealth(playerCombat.HP);
+            gameUI.UpdateHealth(combat.HP);
             gamepadHaptics.ReceivedDamage(sourcePoint);
-            playerAnimations.ShowReceiveDamage();
+            animations.ShowReceiveDamage();
+            sfx.PlayCombatSound(CombatSoundType.Hurt);
+            cameraEffects.PlayEffect(CameraSingularEffect.Shake);
         }
         
         public void OnWeaponHit(Vector2 hitPosition)
         {
             gamepadHaptics.SuccessfullyAttacked(hitPosition);
-            //TODO: play some sfx
+            sfx.PlayCombatSound(CombatSoundType.Hit);
         }
         #endregion
         
@@ -104,22 +110,23 @@ namespace Player
 
         public void OnStateChange(PlayerStates newState)
         {
-            playerAnimations.UpdateMovementTriggers(newState);
-            playerCombat.UpdateState(newState);
-            playerSfx.UpdateState(newState);
+            animations.UpdateMovementTriggers(newState);
+            combat.UpdateState(newState);
+            sfx.UpdateState(newState);
         }
         #endregion
         
         #region Animation Events
-        public void OnStep() { playerSfx.OnStep(); }
+        public void OnStep() { sfx.OnStep(); }
 
         public void AttackDamageStart(AttackType attackType)
         {
-            playerCombat.AttackDamageStart(attackType);
-            // play some sfx (undertale wziuuu)
+            combat.AttackDamageStart(attackType);
+            //TODO: this probably won't be accurate, but let's try
+            sfx.PlayCombatSound(CombatSoundType.Swing);
         }
 
-        public void AttackDamageEnd() { playerCombat.AttackDamageEnd(); }
+        public void AttackDamageEnd() { combat.AttackDamageEnd(); }
         #endregion
         
         #region Input Events
@@ -128,7 +135,7 @@ namespace Player
         public void OnUse(InputAction.CallbackContext context)
         {
             if (!context.started) return;
-            playerCollisions.OnUse();
+            collisions.OnUse();
         }
         
         // Combat events
@@ -136,7 +143,7 @@ namespace Player
         public void OnAttack(InputAction.CallbackContext context)
         {
             if (!(context.started || context.canceled)) return;
-            playerCombat.OnAttack(context.started);
+            combat.OnAttack(context.started);
         }
         
         // UI events
@@ -154,17 +161,18 @@ namespace Player
         // ---------------
         public void OnMove(InputAction.CallbackContext context)
         {
-            if(!playerMovement.Move(context.ReadValue<Vector2>())) return;
+            //TODO
+            if(!movement.Move(context.ReadValue<Vector2>())) return;
             
-            playerAnimations.UpdateMovingDirection(playerMovement.direction.x);
-            playerCombat.UpdateMovingDirection(playerMovement.direction);
+            animations.UpdateMovingDirection(movement.direction.x);
+            combat.UpdateMovingDirection(movement.direction);
         }
 
         public void OnJump(InputAction.CallbackContext context)
         {
             if (!(context.started || context.canceled)) return;
             
-            if(!playerMovement.Jump(context.started)) return;
+            if(!movement.Jump(context.started)) return;
             // do something if jump was successful
             //TODO: maybe move camera back a bit?
         }
@@ -172,7 +180,7 @@ namespace Player
         public void OnCrouch(InputAction.CallbackContext context)
         {
             if (!(context.started || context.canceled)) return;
-            playerMovement.Crouch(context.started);
+            movement.Crouch(context.started);
             //TODO: maybe invoke event in camera
             //that after x seconds moves it down a bit
             //(Crouch() && context.started)
@@ -181,13 +189,13 @@ namespace Player
         public void OnBoost(InputAction.CallbackContext context)
         {
             if(!context.started) return;
-            playerMovement.Boost();
+            movement.Boost();
         }
 
         public void OnDodge(InputAction.CallbackContext context)
         {
             if (!context.started) return;
-            playerMovement.Dodge();
+            movement.Dodge();
         }
         #endregion
     }  

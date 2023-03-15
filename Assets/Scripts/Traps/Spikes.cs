@@ -11,6 +11,7 @@ public class Spikes : Trap
     void Start()
     {
         base.Setup();
+        knockbackForce *= Utils.KnockbackMult;
     }
 
     protected override void Attack(GameObject other)

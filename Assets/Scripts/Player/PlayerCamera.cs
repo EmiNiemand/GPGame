@@ -79,7 +79,7 @@ public class PlayerCamera : MonoBehaviour
         // Additional smoothing of target point
         targetPos = Vector3.MoveTowards(targetPos, newTargetPos, targetPointSpeed * Time.deltaTime);
 
-        if(debugCircle != null)
+        if(debugCircle)
             debugCircle.transform.position = new Vector3(targetPos.x, targetPos.y, 0);
 
         playerCamera.transform.position = Vector3.SmoothDamp(cameraPos, targetPos, ref smoothDampVelocity, followDuration);

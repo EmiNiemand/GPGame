@@ -72,9 +72,9 @@ namespace Player
             }
             else if(knockbackForce != 0)
             {
+                rb2D.velocity = Vector2.zero;
                 Vector2 knockbackVector = (Vector2)transform.position - sourcePoint;
                 rb2D.AddForce(knockbackVector.normalized * knockbackForce);
-                Debug.Log(knockbackVector.normalized * knockbackForce);
             }
             playerManager.OnReceiveDamage(sourcePoint);
         }
