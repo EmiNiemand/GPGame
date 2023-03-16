@@ -9,14 +9,21 @@ public class GlowWorm : MonoBehaviour
     [SerializeField] private float minMoveSpeed = 0.1f;
     [SerializeField] private float minDistanceToMove;
     
+
+    private GameObject player;
     private List<Vector2> destinations = new List<Vector2>();
     private Vector2 destination;
+    private bool stopped;
 
     private float t;
 
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindWithTag("Player");
+        
+        // Calculate path
+        // --------------
         for (int i = 0; i < points.Count - 2; i += 2)
         {
             t = Vector2.Distance(points[i].transform.position, points[i + 2].transform.position) / 100;
@@ -40,10 +47,15 @@ public class GlowWorm : MonoBehaviour
 #endif
     }
 
+    public void SetStopped(bool stop = true) { stopped = stop; }
+    
     // Update is called once per frame
     void FixedUpdate()
     {
-        var distance = Vector2.Distance(transform.position, GameObject.FindWithTag("Player").transform.position);
+        //TODO: figure out what to do with this thing
+        // if (stopped) return;
+
+        var distance = Vector2.Distance(transform.position, player.transform.position);
         // Debug.Log(distance);
         
         if (distance > minDistanceToMove) return;
@@ -51,7 +63,7 @@ public class GlowWorm : MonoBehaviour
         float moveSpeed = minMoveSpeed / distance;
         
         transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed);
-
+        
         if (Vector2.Distance(transform.position, destination) < 0.001f)
         {
             if (destinations.IndexOf(destination) == destinations.Count - 1)
