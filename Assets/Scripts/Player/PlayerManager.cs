@@ -122,7 +122,6 @@ namespace Player
         public void AttackDamageStart(AttackType attackType)
         {
             combat.AttackDamageStart(attackType);
-            //TODO: this probably won't be accurate, but let's try
             sfx.PlayCombatSound(CombatSoundType.Swing);
         }
 

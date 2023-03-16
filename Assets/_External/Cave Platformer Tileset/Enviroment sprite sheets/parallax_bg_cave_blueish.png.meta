@@ -69,7 +69,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 16
     mipBias: 0
     wrapU: 1
@@ -83,7 +83,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -269,7 +269,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 49b12447af1ec1145a89087d503fa542
     internalID: 0
     vertices: []
     indices: 
@@ -277,12 +277,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      parallax_bg_cave_blueish_3: 21300018
-      parallax_bg_cave_blueish_1: 21300014
-      parallax_bg_cave_blueish_5: 21300022
-      parallax_bg_cave_blueish_2: 21300016
       parallax_bg_cave_blueish_0: 21300012
+      parallax_bg_cave_blueish_1: 21300014
+      parallax_bg_cave_blueish_2: 21300016
+      parallax_bg_cave_blueish_3: 21300018
       parallax_bg_cave_blueish_4: 21300020
+      parallax_bg_cave_blueish_5: 21300022
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

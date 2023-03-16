@@ -23,7 +23,6 @@ public class Spikes : Trap
         // var contactPoints = new List<ContactPoint2D>();
         // GetComponent<CompositeCollider2D>().GetContacts(filter, contactPoints);
         
-        //TODO: will only work on Player
         //TODO: will only work properly if spikes are placed horizontally
 
         //TODO: implement IDamageable in PlayerColliders

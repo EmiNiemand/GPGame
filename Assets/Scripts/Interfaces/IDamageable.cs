@@ -8,7 +8,7 @@ using UnityEngine;
 ///</summary>
 public interface IDamageable
 {
-    //TODO: think whether these two properties need to be there
+    // REMOVED FOR NOW
     // e.g.: some objects may be just one-hit destructable,
     // playerCollisions class doesn't use them as anything meaningful;
     // Maybe move them to another interface?

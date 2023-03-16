@@ -23,6 +23,9 @@ namespace Player
 
     public class PlayerMovement : MonoBehaviour
     {
+        //TODO: when player slides up on the wall too high up, he might leave WallSlide and Fall (and doesn't check if he can grab ledge)
+        
+
         [HideInInspector] public Rigidbody2D rb2D;
         
         [HideInInspector] public Vector2 initColliderSize;

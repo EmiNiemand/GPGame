@@ -292,6 +292,7 @@ GameObject:
   - component: {fileID: 6658091038113086851}
   - component: {fileID: 6658091038113086852}
   - component: {fileID: 6658091038113086853}
+  - component: {fileID: 9148860170792617108}
   m_Layer: 5
   m_Name: _GameUI
   m_TagString: Untagged
@@ -393,3 +394,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7274569d4741e984c8c205d9227b9ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gradientHP:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.15566039, b: 0.15566039, a: 1}
+    key1: {r: 0.9811321, g: 0.5330404, b: 0.013883919, a: 1}
+    key2: {r: 0.5253911, g: 1, b: 0, a: 0}
+    key3: {r: 0.5253911, g: 1, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 17348
+    ctime1: 32768
+    ctime2: 51079
+    ctime3: 53392
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
+--- !u!95 &9148860170792617108
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6658091038113086854}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b88a98736580bd3498ab010df55f4f25, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0

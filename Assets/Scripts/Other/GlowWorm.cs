@@ -32,11 +32,12 @@ public class GlowWorm : MonoBehaviour
 
         destination = destinations[0];
         
-        // TODO: comment before the build
+#if (UNITY_EDITOR) 
         for(int i = 0; i < destinations.Count - 1; i++)
         {
             Debug.DrawLine(destinations[i], destinations[i + 1], Color.red, 2000f);
         }
+#endif
     }
 
     // Update is called once per frame

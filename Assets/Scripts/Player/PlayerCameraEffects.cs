@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Player
 {
     public enum CameraSingularEffect { Shake }
-    public enum CameraPersistentEffect { LookDown, LookUp }
+    public enum CameraPersistentEffect { LookDown, LookUp, ZoomOut,  }
     
     public class PlayerCameraEffects : MonoBehaviour
     {

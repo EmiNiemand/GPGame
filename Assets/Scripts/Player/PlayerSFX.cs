@@ -54,10 +54,9 @@ namespace Player
         // Start is called before the first frame update
         void Start()
         {
-            //TODO: implement in game
             audioSource = transform.Find("PlayerAudioSources").GetComponentsInChildren<AudioSource>();
-            sourceIndex = -1;
-            combatIndex = -1;
+            sourceIndex = 0;
+            combatIndex = 0;
             
             currentState = PlayerStates.Idle;
     
@@ -77,6 +76,8 @@ namespace Player
 
         public void UpdateState(PlayerStates newState)
         {
+            if(audioSource.Length == 0) return; 
+            
             // Stop loops at previous source
             // -----------------------------
             if(audioSource[sourceIndex].loop)
@@ -84,7 +85,8 @@ namespace Player
             
             // Update index to the next audio source
             // -------------------------------------
-            sourceIndex = ++sourceIndex % audioSource.Length - combatBufferSize - 1;
+            sourceIndex++;
+            sourceIndex %= audioSource.Length - combatBufferSize - 1;
 
             // Set up audio
             // ------------
@@ -123,11 +125,17 @@ namespace Player
             // -------------------------------------------------------
             if(combatSound.playType != PlayType.OnEvent) audioSource[offsetIndex].Play();
             
-            //TODO: right now OnEvent combat sounds are not supported, but ready to implement
+            //INFO: right now OnEvent combat sounds are not supported, but ready to implement
         }
     
         public void OnStep() {
-            audioSource[sourceIndex].Stop();
+            sourceIndex++;
+            sourceIndex %= audioSource.Length - combatBufferSize - 1;
+            
+            var stateAudio = playerSounds[currentState];
+            audioSource[sourceIndex].clip = stateAudio.clip;
+            audioSource[sourceIndex].loop = false;
+            
             audioSource[sourceIndex].Play();
         }
     }

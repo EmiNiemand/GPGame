@@ -222,7 +222,6 @@ namespace Player
                     if (playerMovement.direction.y <= -0.5) SetCurrentState(PlayerStates.Fall);
                     break;
                 case PlayerStates.WallSlide:
-                    //TODO: check if player can LedgeGrab
                     // while WallSliding player can go a little bit up,
                     // which may make it possible to reach a ledge
                     
