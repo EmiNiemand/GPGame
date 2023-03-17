@@ -21,6 +21,8 @@ namespace Player
         private GameUI gameUI;
         private PauseMenuUI pauseMenuUI;
         private TutorialUI tutorialUI;
+
+        private bool gamePaused = false;
         
         // Start is called before the first frame update
         void Start()
@@ -150,6 +152,7 @@ namespace Player
         // ------------------
         public void OnUse(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if (!context.started) return;
             collisions.OnUse();
         }
@@ -158,6 +161,7 @@ namespace Player
         // -------------
         public void OnAttack(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if (!(context.started || context.canceled)) return;
             combat.OnAttack(context.started);
         }
@@ -170,9 +174,9 @@ namespace Player
             PauseGame();
         }
 
-        private void PauseGame()
+        public void PauseGame()
         {
-            pauseMenuUI.PauseUnpause();
+            gamePaused = pauseMenuUI.PauseUnpause();
             //TODO: code "bugs" out when player leaves pause menu via button 
             // if(pauseMenuUI.PauseUnpause())
             // {
@@ -190,6 +194,7 @@ namespace Player
         // ---------------
         public void OnMove(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             //TODO: make player look up or down after a few seconds of holding button
             if(!movement.Move(context.ReadValue<Vector2>())) return;
             
@@ -199,6 +204,7 @@ namespace Player
 
         public void OnJump(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if (!(context.started || context.canceled)) return;
             
             if(!movement.Jump(context.started)) return;
@@ -208,6 +214,7 @@ namespace Player
 
         public void OnCrouch(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if (!(context.started || context.canceled)) return;
             
             if(pauseMenuUI.activated) { PauseGame(); }
@@ -220,12 +227,14 @@ namespace Player
 
         public void OnBoost(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if(!context.started) return;
             movement.Boost();
         }
 
         public void OnDodge(InputAction.CallbackContext context)
         {
+            if (gamePaused) return;
             if (!context.started) return;
             movement.Dodge();
         }

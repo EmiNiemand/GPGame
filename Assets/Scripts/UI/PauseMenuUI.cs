@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -33,7 +34,9 @@ namespace UI
 
         public void OnClickContinue()
         {
-            PauseUnpause();
+            // PauseUnpause();
+            //TODO: improve, this will do as workaround for now
+            FindObjectOfType<PlayerManager>().PauseGame();
         }
         
         public void OnClickReturn()
