@@ -48,7 +48,7 @@ namespace Enemies
             HP = maxHP;
 
             rb2D = GetComponent<Rigidbody2D>();
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             animator = GetComponent<Animator>();
             enemyUI = GetComponentInChildren<EnemyUI>();
             enemyUI.Setup();

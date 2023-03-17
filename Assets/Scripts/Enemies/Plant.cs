@@ -26,15 +26,10 @@ namespace Enemies
         void Update()
         {
             if (Mathf.Abs(Vector2.Distance(player.transform.position, transform.position)) > distanceToActivate) return;
-            if (missile) return;
-            missile = Instantiate(missilePrefab, transform.position + new Vector3(missileSpawnShift.x * lookingDirection, 
-                missileSpawnShift.y, missileSpawnShift.z), Quaternion.identity);
-            missile.transform.SetParent(gameObject.transform);
+            if (missile || animatingAttack) return;
             
-            // if (missile || animatingAttack) return;
-            //
-            // animatingAttack = true;
-            // animator.SetTrigger("Attack");
+            animatingAttack = true;
+            animator.SetTrigger("Attack");
         }
 
         void AE_ShootBullet()
