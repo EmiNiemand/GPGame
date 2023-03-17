@@ -17,6 +17,7 @@ namespace Enemies.Missiles
 
         void FixedUpdate()
         {
+            if (isDestroyed) return;
             if (!FollowPlayer) return;
             GetComponent<Rigidbody2D>().AddForce(((Vector2)(GameObject.FindWithTag("Player").transform.position - transform.position)).normalized * speed, ForceMode2D.Impulse);
         }

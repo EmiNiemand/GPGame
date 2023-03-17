@@ -8,6 +8,7 @@ namespace Enemies.Missiles
     {
         private void FixedUpdate()
         {
+            if (isDestroyed) return;
             GetComponent<Rigidbody2D>().AddForce(new Vector2(GetComponentInParent<Enemy>().lookingDirection * speed, 0), ForceMode2D.Impulse);
         }
     }

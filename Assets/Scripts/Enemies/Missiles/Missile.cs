@@ -12,19 +12,24 @@ namespace Enemies.Missiles
         [SerializeField] private int damage;
         [SerializeField] private int knockbackForce;
         [SerializeField] protected float speed;
+        protected bool isDestroyed = false;
 
-        private void OnCollisionEnter2D(Collision2D col)
+        private void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.gameObject.CompareTag("Player"))
+            if (col.CompareTag("Player"))
             {
-                col.gameObject.GetComponentInParent<PlayerCombat>().ReceiveDamage(damage, transform.position, knockbackForce);
+                isDestroyed = true;
+                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                 GetComponent<Light2D>().enabled = false;
                 GetComponent<CircleCollider2D>().enabled = false;
                 GetComponent<ParticleSystem>().Play();
                 Destroy(gameObject, 1f);
+                col.GetComponentInParent<PlayerCombat>().ReceiveDamage(damage, transform.position, knockbackForce);
             }
-            else if (col.gameObject.CompareTag("Environment"))
+            else if (col.CompareTag("Environment"))
             {
+                isDestroyed = true;
+                GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                 GetComponent<Light2D>().enabled = false;
                 GetComponent<CircleCollider2D>().enabled = false;
                 GetComponent<ParticleSystem>().Play();
