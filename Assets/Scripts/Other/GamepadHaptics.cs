@@ -18,6 +18,7 @@ public class GamepadHaptics : MonoBehaviour
     [SerializeField] private HapticSettings successfulAttack;
     [SerializeField] private HapticSettings receivedDamage;
 
+    [HideInInspector] public string currentControlScheme;
     private float playerWidth = 1;
     
     public void SetPlayerWidth(float width) { playerWidth = width; }
@@ -89,6 +90,6 @@ public class GamepadHaptics : MonoBehaviour
 
     private bool IsEnabled()
     {
-        return enableHaptics && Gamepad.current is not null;
+        return enableHaptics && Gamepad.current is not null && currentControlScheme == "Gamepad";
     }
 }

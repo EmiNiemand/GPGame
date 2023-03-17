@@ -15,10 +15,12 @@ namespace Player
         private PlayerMovement movement;
         private PlayerCollisions collisions;
         private PlayerCameraEffects cameraEffects;
-        
+
+        private PlayerInput playerInput;
         private GamepadHaptics gamepadHaptics;
         private GameUI gameUI;
         private PauseMenuUI pauseMenuUI;
+        private TutorialUI tutorialUI;
         
         // Start is called before the first frame update
         void Start()
@@ -31,6 +33,8 @@ namespace Player
             combat = GetComponent<PlayerCombat>();
             cameraEffects = GetComponent<PlayerCameraEffects>();
             
+            playerInput = GetComponent<PlayerInput>();
+            
             gamepadHaptics = GetComponent<GamepadHaptics>();
             gamepadHaptics.SetPlayerWidth(
                 collisions.gameObject.GetComponent<Collider2D>()
@@ -40,7 +44,10 @@ namespace Player
             gameUI.Setup();
             gameUI.SetMaxHealth(combat.maxHP);
 
-            pauseMenuUI = GameObject.Find("_PauseMenuManager").GetComponent<PauseMenuUI>();
+            pauseMenuUI = FindObjectOfType<PauseMenuUI>();
+            tutorialUI = FindObjectOfType<TutorialUI>();
+            
+            OnControlsChanged();
         }
         
         #region Situation Events
@@ -129,6 +136,16 @@ namespace Player
         #endregion
         
         #region Input Events
+        // PlayerInput events
+        // ------------------
+        public void OnControlsChanged()
+        {
+            var scheme = playerInput.currentControlScheme;
+            
+            gamepadHaptics.currentControlScheme = scheme;
+            tutorialUI.SetControlScheme(scheme);
+        }
+        
         // Interaction events
         // ------------------
         public void OnUse(InputAction.CallbackContext context)
@@ -155,16 +172,18 @@ namespace Player
 
         private void PauseGame()
         {
-            if(pauseMenuUI.PauseUnpause())
-            {
-                gamepadHaptics.Pause();
-                movement.bBlockMovement = true;
-            }
-            else
-            {
-                gamepadHaptics.Resume();
-                movement.bBlockMovement = false;
-            }
+            pauseMenuUI.PauseUnpause();
+            //TODO: code "bugs" out when player leaves pause menu via button 
+            // if(pauseMenuUI.PauseUnpause())
+            // {
+            //     gamepadHaptics.Pause();
+            //     movement.bBlockMovement = true;
+            // }
+            // else
+            // {
+            //     gamepadHaptics.Resume();
+            //     movement.bBlockMovement = false;
+            // }
         }
 
         // Movement events

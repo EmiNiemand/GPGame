@@ -103,7 +103,7 @@ namespace Player
             //TODO: improve this sheet
             // Workaround for movement freeze on heavy attack
             // ----------------------------------------------
-            if (currentState is PlayerStates.Boost or PlayerStates.Dodge) { AE_MovementStart(); AE_AttackDamageEnd();}
+            if (currentState is not PlayerStates.Idle or PlayerStates.Move) { AE_MovementStart(); AE_AttackDamageEnd();}
 
             // Scale collider down when crouching
             // ----------------------------------

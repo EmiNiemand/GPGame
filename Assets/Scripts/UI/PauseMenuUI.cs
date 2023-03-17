@@ -15,10 +15,11 @@ namespace UI
 
         public bool PauseUnpause()
         {
-            if (!pauseMenu.activeInHierarchy)
+            activated = !activated;
+            pauseMenu.SetActive(activated);
+            
+            if (activated)
             {
-                activated = true;
-                pauseMenu.SetActive(true);
                 Time.timeScale = 0f;
             
                 EventSystem.current.SetSelectedGameObject(null);
@@ -26,8 +27,6 @@ namespace UI
                 return true;
             }
             
-            pauseMenu.SetActive(false);
-            activated = false;
             Time.timeScale = 1f;
             return false;
         }

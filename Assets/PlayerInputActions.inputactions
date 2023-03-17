@@ -96,7 +96,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -107,7 +107,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -118,7 +118,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -129,7 +129,7 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -151,7 +151,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -173,7 +173,7 @@
                     "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -181,7 +181,7 @@
                 {
                     "name": "",
                     "id": "8b706726-fced-4f63-b50c-9b17e4d6b644",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -195,7 +195,7 @@
                     "path": "<Keyboard>/p",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Boost",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -217,7 +217,7 @@
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -225,7 +225,7 @@
                 {
                     "name": "",
                     "id": "680dcd8f-a99f-4488-8574-9e56243b38f1",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/dpad/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -239,7 +239,7 @@
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Dodge",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -247,33 +247,11 @@
                 {
                     "name": "",
                     "id": "e3ef1257-e68a-4e7d-8cc9-4c699713e7a9",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Dodge",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e1b629f3-b987-4e6b-ba06-60be10ce34fb",
-                    "path": "<Keyboard>/leftCtrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard+Mouse",
-                    "action": "Crouch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c29a5949-666b-4ce0-bf1e-a2e16fbc9361",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Crouch",
+                    "action": "Dodge",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -283,7 +261,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -331,7 +309,7 @@
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard+Mouse",
+                    "groups": "Keyboard",
                     "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -616,16 +594,11 @@
     ],
     "controlSchemes": [
         {
-            "name": "Keyboard+Mouse",
-            "bindingGroup": "Keyboard+Mouse",
+            "name": "Keyboard",
+            "bindingGroup": "Keyboard",
             "devices": [
                 {
                     "devicePath": "<Keyboard>",
-                    "isOptional": false,
-                    "isOR": false
-                },
-                {
-                    "devicePath": "<Mouse>",
                     "isOptional": false,
                     "isOR": false
                 }

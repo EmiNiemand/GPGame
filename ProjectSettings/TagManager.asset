@@ -45,6 +45,9 @@ TagManager:
   - name: Background
     uniqueID: 3832332655
     locked: 0
+  - name: Traps
+    uniqueID: 309063379
+    locked: 0
   - name: CollisionGround
     uniqueID: 2124937829
     locked: 0
@@ -65,9 +68,6 @@ TagManager:
     locked: 0
   - name: Usables
     uniqueID: 505699419
-    locked: 0
-  - name: Traps
-    uniqueID: 309063379
     locked: 0
   - name: Bullets
     uniqueID: 4127833761

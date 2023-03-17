@@ -13,6 +13,7 @@ namespace Enemies
         [SerializeField] private Vector3 missileSpawnShift = Vector3.zero;
         
         private GameObject player;
+        private bool animatingAttack = false;
 
         // Start is called before the first frame update
         protected override void Start()
@@ -29,6 +30,19 @@ namespace Enemies
             missile = Instantiate(missilePrefab, transform.position + new Vector3(missileSpawnShift.x * lookingDirection, 
                 missileSpawnShift.y, missileSpawnShift.z), Quaternion.identity);
             missile.transform.SetParent(gameObject.transform);
+            
+            // if (missile || animatingAttack) return;
+            //
+            // animatingAttack = true;
+            // animator.SetTrigger("Attack");
+        }
+
+        void AE_ShootBullet()
+        {
+            missile = Instantiate(missilePrefab, transform.position + new Vector3(missileSpawnShift.x * lookingDirection, 
+                missileSpawnShift.y, missileSpawnShift.z), Quaternion.identity);
+            missile.transform.SetParent(gameObject.transform);
+            animatingAttack = false;
         }
     }
 }

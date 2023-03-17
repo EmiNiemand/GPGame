@@ -37,6 +37,7 @@ namespace Enemies
 
         protected Rigidbody2D rb2D;
         protected SpriteRenderer spriteRenderer;
+        protected Animator animator;
         protected EnemyUI enemyUI;
         public int lookingDirection {get; protected set;}
 
@@ -48,6 +49,7 @@ namespace Enemies
 
             rb2D = GetComponent<Rigidbody2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            animator = GetComponent<Animator>();
             enemyUI = GetComponentInChildren<EnemyUI>();
             enemyUI.Setup();
             enemyUI.SetMaxHP(maxHP);
