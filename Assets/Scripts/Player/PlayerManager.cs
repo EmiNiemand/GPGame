@@ -80,14 +80,10 @@ namespace Player
         #endregion
         
         #region Combat Events
-        public void AttackStart(Weapon.LookingDirection direction)
-        {
-            animations.AttackStart(direction);
-        }
 
-        public void AttackEnd()
+        public void AttackStarted(AttackAnimation animation)
         {
-            animations.AttackEnd();
+            animations.AttackAnimation(animation);
         }
         #endregion
         
@@ -142,10 +138,11 @@ namespace Player
         // ------------------
         public void OnControlsChanged()
         {
+            if (!playerInput) return;
             var scheme = playerInput.currentControlScheme;
             
             gamepadHaptics.currentControlScheme = scheme;
-            tutorialUI.SetControlScheme(scheme);
+            if(tutorialUI) tutorialUI.SetControlScheme(scheme);
         }
         
         // Interaction events
@@ -162,7 +159,7 @@ namespace Player
         public void OnAttack(InputAction.CallbackContext context)
         {
             if (gamePaused) return;
-            if (!(context.started || context.canceled)) return;
+            if (!context.started) return;
             combat.OnAttack(context.started);
         }
         

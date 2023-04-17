@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public enum AttackType { Light, Heavy }
+
+public enum AttackAnimation
+{
+    AttackDodge, 
+    AttackRun, 
+    AttackJumpUp, AttackJumpFront, AttackJumpDown,
+    AttackBoost
+}
 
 namespace Player
 {
@@ -24,7 +33,7 @@ namespace Player
         private bool bIsAttacking = false;
         private bool bIsOnCooldown = false;
         private PlayerStates playerState;
-        private readonly PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch, PlayerStates.Dodge };
+        private readonly PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch };
 
         // Start is called before the first frame update
         void Start()
@@ -38,15 +47,43 @@ namespace Player
     
         public void OnAttack(bool actionStarted)
         {
-            if (!bIsCombatActivated) return;
+            if (!bIsCombatActivated || bIsOnCooldown) return;
+            bIsOnCooldown = true;
 
-            switch (actionStarted)
+            switch (playerState)
             {
-                case true when CanAttackState() && !bIsOnCooldown:
-                    playerManager.AttackStart(weapon.GetLookingDirection());
-                    bIsOnCooldown = true; break;
-                case false:
-                    playerManager.AttackEnd(); break;
+                case PlayerStates.Idle or PlayerStates.Move:
+                    playerManager.AttackStarted(AttackAnimation.AttackRun);
+                    break;
+                case PlayerStates.Jump or PlayerStates.Fall:
+                    switch (weapon.GetLookingDirection())
+                    {
+                        case Weapon.LookingDirection.Up:
+                            playerManager.AttackStarted(AttackAnimation.AttackJumpUp);
+                            break;
+                        case Weapon.LookingDirection.Left or Weapon.LookingDirection.Right:
+                            playerManager.AttackStarted(AttackAnimation.AttackJumpFront);
+                            break;
+                        case Weapon.LookingDirection.Down:
+                            playerManager.AttackStarted(AttackAnimation.AttackJumpDown);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    break;
+                case PlayerStates.Boost:
+                    playerManager.AttackStarted(AttackAnimation.AttackBoost);
+                    break;
+                case PlayerStates.Dodge:
+                    playerManager.AttackStarted(AttackAnimation.AttackDodge);
+                    break;
+                // Not implemented yet
+                case PlayerStates.WallSlide:
+                case PlayerStates.LedgeGrab:
+                case PlayerStates.Crouch:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
