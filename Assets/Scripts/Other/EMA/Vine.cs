@@ -11,6 +11,7 @@ namespace Other.EMA
         private Player.PlayerMovement playerMovement;
 
         private float playerGravityScale;
+        private float playerAdditionalFallinForce;
         private bool stopMovement = false;
         
         // Start is called before the first frame update
@@ -26,7 +27,14 @@ namespace Other.EMA
         private void OnTriggerEnter2D(Collider2D other)
         {
             playerGravityScale = playerMovement.rb2D.gravityScale;
-
+            playerAdditionalFallinForce = playerMovement.additionalFallingForce;
+            if (!stopMovement && playerMovement.direction.y != 0)
+            {
+                playerMovement.additionalFallingForce = 0;
+                playerMovement.rb2D.gravityScale = 0;
+                playerMovement.rb2D.velocity = Vector2.zero;
+                stopMovement = true;
+            }
         }
 
         private void OnTriggerStay2D(Collider2D other)
@@ -35,6 +43,7 @@ namespace Other.EMA
             {
                 if (!stopMovement && playerMovement.direction.y != 0)
                 {
+                    playerMovement.additionalFallingForce = 0;
                     playerMovement.rb2D.gravityScale = 0;
                     playerMovement.rb2D.velocity = Vector2.zero;
                     stopMovement = true;
@@ -48,6 +57,7 @@ namespace Other.EMA
             if (other.CompareTag("Player"))
             {
                 stopMovement = false;
+                playerMovement.additionalFallingForce = playerAdditionalFallinForce;
                 playerMovement.rb2D.gravityScale = playerGravityScale;
             }
         }
