@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum AttackStrength { Light, Medium, Heavy }
+public enum AttackStrength { Light=1, Medium, Heavy }
 
 public enum AttackType
 {
@@ -47,7 +47,7 @@ namespace Player
             HP = maxHP;
         }
     
-        public void OnAttack(bool actionStarted)
+        public void OnAttack()
         {
             if (!bIsCombatActivated || bIsOnCooldown) return;
             bIsOnCooldown = true;
@@ -93,11 +93,30 @@ namespace Player
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            playerManager.AttackStart(attackType);
         }
 
         public void OnWeaponHit(Vector2 hitPosition)
         {
             playerManager.OnWeaponHit(hitPosition);
+            // Apply movement modifiers
+            switch (attackType)
+            {
+                case AttackType.AttackDodge:
+                    break;
+                case AttackType.AttackRun:
+                    break;
+                case AttackType.AttackJumpUp:
+                    break;
+                case AttackType.AttackJumpFront:
+                    break;
+                case AttackType.AttackJumpDown:
+                    break;
+                case AttackType.AttackBoost:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     
         public bool Heal(int value)

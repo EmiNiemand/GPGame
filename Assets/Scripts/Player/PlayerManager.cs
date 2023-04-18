@@ -160,7 +160,7 @@ namespace Player
         {
             if (gamePaused) return;
             if (!context.started) return;
-            combat.OnAttack(context.started);
+            combat.OnAttack();
         }
         
         // UI events

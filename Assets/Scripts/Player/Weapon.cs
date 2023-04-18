@@ -91,8 +91,8 @@ public class Weapon : MonoBehaviour
             // Temporary workaround for boar
             if (collision is EdgeCollider2D) return;
 
-            int damageValue = currentAttack == AttackStrength.Light ? lightDamage : heavyDamage;
-            int knockValue = currentAttack == AttackStrength.Light ? knockbackForce / 4 : knockbackForce;
+            int damageValue = (int)currentAttack * (int)currentAttack * lightDamage;
+            int knockValue = (int)currentAttack * (int)currentAttack * knockbackForce;
             Vector2 position = transform.parent.transform.position;
             damageable.ReceiveDamage(damageValue, position, knockValue);
             playerCombat.OnWeaponHit(collision.transform.position);
