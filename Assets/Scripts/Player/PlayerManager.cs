@@ -81,9 +81,9 @@ namespace Player
         
         #region Combat Events
 
-        public void AttackStarted(AttackAnimation animation)
+        public void AttackStart(AttackType attackType)
         {
-            animations.AttackAnimation(animation);
+            animations.AttackAnimation(attackType);
         }
         #endregion
         
@@ -124,9 +124,9 @@ namespace Player
         #region Animation Events
         public void OnStep() { sfx.OnStep(); }
 
-        public void AttackDamageStart(AttackType attackType)
+        public void AttackDamageStart()
         {
-            combat.AttackDamageStart(attackType);
+            combat.AttackDamageStart();
             sfx.PlayCombatSound(CombatSoundType.Swing);
         }
 

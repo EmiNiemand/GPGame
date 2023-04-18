@@ -28,7 +28,7 @@ public class Weapon : MonoBehaviour
     private PlayerCombat playerCombat;
 
     private bool bIsAttackOnCooldown = false;
-    private AttackType currentAttack;
+    private AttackStrength currentAttack;
     // this should probably be moved to player combat as well
     public LookingDirection lookingDirection;
 
@@ -51,16 +51,16 @@ public class Weapon : MonoBehaviour
         knockbackForce *= Utils.KnockbackMult;
     }
 
-    public void StartAttack(AttackType attackType)
+    public void StartAttack(AttackStrength attackStrength)
     {
-        currentAttack = attackType;
+        currentAttack = attackStrength;
 
         GetLookingDirection();
         transform.rotation = Quaternion.Euler(0, 0, (int)lookingDirection * 90);
 
         // Temporary workaround for heavy attacks
         //TODO: improve
-        Vector3 weaponPos = new Vector3(attackType==AttackType.Light?0:0.5f, 0);
+        Vector3 weaponPos = new Vector3(attackStrength==AttackStrength.Light?0:0.5f, 0);
         switch (lookingDirection)
         {
             case LookingDirection.Left:
@@ -91,8 +91,8 @@ public class Weapon : MonoBehaviour
             // Temporary workaround for boar
             if (collision is EdgeCollider2D) return;
 
-            int damageValue = currentAttack == AttackType.Light ? lightDamage : heavyDamage;
-            int knockValue = currentAttack == AttackType.Light ? knockbackForce / 4 : knockbackForce;
+            int damageValue = currentAttack == AttackStrength.Light ? lightDamage : heavyDamage;
+            int knockValue = currentAttack == AttackStrength.Light ? knockbackForce / 4 : knockbackForce;
             Vector2 position = transform.parent.transform.position;
             damageable.ReceiveDamage(damageValue, position, knockValue);
             playerCombat.OnWeaponHit(collision.transform.position);

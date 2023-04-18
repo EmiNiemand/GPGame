@@ -41,9 +41,9 @@ namespace Player
             playerAnimator.SetFloat(SpeedHash, Mathf.Abs(moveSpeed/5));
         }
 
-        public void AttackAnimation(AttackAnimation attackAnimation)
+        public void AttackAnimation(AttackType attackType)
         {
-            playerAnimator.SetTrigger(attackAnimation.ToString());
+            playerAnimator.SetTrigger(attackType.ToString());
         }
 
         public void UpdateMovingDirection(float newMovingDirection)
@@ -98,8 +98,7 @@ namespace Player
 
         #region Animation Events
         public void AE_MakeStep() { playerManager.OnStep(); }
-        public void AE_AttackLightDamageStart() { playerManager.AttackDamageStart(AttackType.Light); }
-        public void AE_AttackHeavyDamageStart() { playerManager.AttackDamageStart(AttackType.Heavy); }
+        public void AE_AttackDamageStart() { playerManager.AttackDamageStart(); }
         public void AE_AttackDamageEnd() { playerManager.AttackDamageEnd(); }
         
         public void AE_MovementStop() { playerManager.MovementFreeze(); }

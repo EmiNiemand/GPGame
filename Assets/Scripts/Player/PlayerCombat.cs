@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum AttackType { Light, Heavy }
+public enum AttackStrength { Light, Medium, Heavy }
 
-public enum AttackAnimation
+public enum AttackType
 {
     AttackDodge, 
     AttackRun, 
@@ -34,6 +34,8 @@ namespace Player
         private bool bIsOnCooldown = false;
         private PlayerStates playerState;
         private readonly PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch };
+        private AttackType attackType;
+        private AttackStrength attackStrength;
 
         // Start is called before the first frame update
         void Start()
@@ -53,29 +55,35 @@ namespace Player
             switch (playerState)
             {
                 case PlayerStates.Idle or PlayerStates.Move:
-                    playerManager.AttackStarted(AttackAnimation.AttackRun);
+                    attackType = AttackType.AttackRun;
+                    attackStrength = AttackStrength.Light;
                     break;
                 case PlayerStates.Jump or PlayerStates.Fall:
                     switch (weapon.GetLookingDirection())
                     {
                         case Weapon.LookingDirection.Up:
-                            playerManager.AttackStarted(AttackAnimation.AttackJumpUp);
+                            attackType = AttackType.AttackJumpUp;
+                            attackStrength = AttackStrength.Light;
                             break;
                         case Weapon.LookingDirection.Left or Weapon.LookingDirection.Right:
-                            playerManager.AttackStarted(AttackAnimation.AttackJumpFront);
+                            attackType = AttackType.AttackJumpFront;
+                            attackStrength = AttackStrength.Medium;
                             break;
                         case Weapon.LookingDirection.Down:
-                            playerManager.AttackStarted(AttackAnimation.AttackJumpDown);
+                            attackType = AttackType.AttackJumpDown;
+                            attackStrength = AttackStrength.Medium;
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                     break;
                 case PlayerStates.Boost:
-                    playerManager.AttackStarted(AttackAnimation.AttackBoost);
+                    attackType = AttackType.AttackBoost;
+                    attackStrength = AttackStrength.Heavy;
                     break;
                 case PlayerStates.Dodge:
-                    playerManager.AttackStarted(AttackAnimation.AttackDodge);
+                    attackType = AttackType.AttackDodge;
+                    attackStrength = AttackStrength.Heavy;
                     break;
                 // Not implemented yet
                 case PlayerStates.WallSlide:
@@ -157,7 +165,7 @@ namespace Player
         
         // Pass-through methods called from animations
         // -------------------------------------------
-        public void AttackDamageStart(AttackType attackType) { weapon.StartAttack(attackType); }
+        public void AttackDamageStart() { weapon.StartAttack(attackStrength); }
         public void AttackDamageEnd() { weapon.EndAttack(); StartCoroutine(CooldownTime()); }
 
         public void UpdateMovingDirection(Vector2 direction) { weapon.UpdateMovingDirection(direction); }
