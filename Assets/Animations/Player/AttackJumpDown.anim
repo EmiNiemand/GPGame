@@ -1540,7 +1540,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.016666668
-    functionName: AE_AttackLightDamageStart
+    functionName: AE_AttackDamageStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

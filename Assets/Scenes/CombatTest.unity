@@ -974,7 +974,7 @@ MonoBehaviour:
   m_Priority: 10
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_Follow: {fileID: 1018031412}
   m_Lens:
     FieldOfView: 40
     OrthographicSize: 7
@@ -1086,6 +1086,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4518056373949002230, guid: dc586b9c58c12474280e196ed3a6ad05, type: 3}
   m_PrefabInstance: {fileID: 987723093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1018031412 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3305082041565366404, guid: 4b61184754afce54aa6118259f7cbca2, type: 3}
+  m_PrefabInstance: {fileID: 1639878182}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1026657424 stripped
 Transform:

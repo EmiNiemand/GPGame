@@ -3951,7 +3951,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.05
-    functionName: AE_AttackHeavyDamageStart
+    functionName: AE_AttackDamageStart
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
