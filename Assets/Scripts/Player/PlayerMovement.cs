@@ -35,9 +35,7 @@ namespace Player
                 playerManager.OnLookingDirectionChange(lookingDirectionValue);
             }
         }
-
-        [HideInInspector] public int previousLookingDirection;
-
+        
         [Header("Jump")] public float jumpForce;
         public int maxJumpCount;
         public float normalJumpTime;
@@ -65,7 +63,6 @@ namespace Player
         [HideInInspector] public bool bIsWallSlideOnCooldown = false;
 
         [Header("Ledge Grab And Climb")] public float ledgeClimbSpeed;
-        [HideInInspector] public bool bLedgeGrab = true;
         [HideInInspector] public bool bIsOnLedge = false;
 
         [Header("Crouch")] [HideInInspector] public bool bCanUncrouch = false;
@@ -84,7 +81,6 @@ namespace Player
             jumpCount = maxJumpCount;
             initGravityScale = rb2D.gravityScale;
             initColliderSize = GetComponentInChildren<CapsuleCollider2D>().size;
-            previousLookingDirection = lookingDirection;
         }
 
         void Update()
@@ -117,12 +113,12 @@ namespace Player
                                         transform.position + new Vector3(0, colliderHalfHeight * 0.5f, 0),
                                         new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
                                         Vector2.right * lookingDirection,
-                                        colliderHalfWidth + 0.3f, "Environment") &&
+                                        colliderHalfWidth + 0.1f, "Environment") &&
                                     Utils.ShootBoxcast(
                                         transform.position - new Vector3(0, colliderHalfHeight * 0.5f, 0),
                                         new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
                                         Vector2.right * lookingDirection,
-                                        colliderHalfWidth + 0.3f, "Environment");
+                                        colliderHalfWidth + 0.1f, "Environment");
 
                     if (bCanWallSlide)
                     {
@@ -181,6 +177,12 @@ namespace Player
 
             if (stateMachine.CheckCurrentState(PlayerStates.WallSlide) && bIsOnLedge)
             {
+                int sign = moveDirection.x>0 ? 1:-1;
+                if (sign * (int)Mathf.Ceil(Mathf.Abs(moveDirection.x)) != lookingDirection && moveDirection.x != 0)
+                {
+                    stateMachine.SetCurrentState(PlayerStates.Jump);
+                    return true;
+                }
                 stateMachine.SetCurrentState(PlayerStates.LedgeClimb);
                 return true;
             }

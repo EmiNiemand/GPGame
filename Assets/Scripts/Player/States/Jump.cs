@@ -8,8 +8,6 @@ namespace Player.States
 {
     public class Jump : State
     {
-        private const float BlockMovementTime = 0.1f;
-        private float blockMovementCounter;
         private float jumpTimeCounter;
         private bool bNormalJump;
 
@@ -20,14 +18,13 @@ namespace Player.States
 
         public override void OnEnterState()
         {
+            playerMovement.jumpCount--;
             playerMovement.rb2D.velocity = new Vector2(playerMovement.rb2D.velocity.x, 0);
             
             if (playerMovement.CheckPreviousState(PlayerStates.WallSlide))
             {
-                playerMovement.bBlockMovement = true;
-                blockMovementCounter = BlockMovementTime;
                 // TODO: check values
-                playerMovement.rb2D.AddForce(new Vector2(-playerMovement.lookingDirection, 1.25f) * playerMovement.jumpForce, ForceMode2D.Impulse);
+                playerMovement.rb2D.AddForce(new Vector2(-playerMovement.lookingDirection * 0.75f, 1.25f) * playerMovement.jumpForce, ForceMode2D.Impulse);
                 playerMovement.lookingDirection *= (-1);
             }
             else if (playerMovement.CheckPreviousState(PlayerStates.Boost))
@@ -64,19 +61,10 @@ namespace Player.States
             if (!playerMovement.bBlockMovement)
             {
                 playerMovement.rb2D.AddForce(playerMovement.moveDirection * playerMovement.moveSpeed, ForceMode2D.Impulse);
-                return;
             }
-            
-            blockMovementCounter -= Time.fixedDeltaTime;
-
-            if (blockMovementCounter > 0) return;
-            playerMovement.bBlockMovement = false;
         }
 
-        public override void OnExitState()
-        {
-            playerMovement.bBlockMovement = false;
-        }
+        public override void OnExitState() {}
     }
 }
 
