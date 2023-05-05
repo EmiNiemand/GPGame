@@ -60,15 +60,16 @@ public class Weapon : MonoBehaviour
 
         // Temporary workaround for heavy attacks
         //TODO: improve
-        Vector3 weaponPos = new Vector3(attackStrength==AttackStrength.Light?0:0.5f, 0);
-        switch (lookingDirection)
-        {
-            case LookingDirection.Left:
-                transform.localPosition = weaponPos; break;
-            case LookingDirection.Right:
-                transform.localPosition = -weaponPos; break;
-            default: break;
-        }
+        Vector3 weaponScale = new Vector3(1 + ((int)attackStrength-1)*0.5f, 1, 1);
+        // switch (lookingDirection)
+        // {
+        //     case LookingDirection.Left:
+        //         transform.localPosition = weaponPos; break;
+        //     case LookingDirection.Right:
+        //         transform.localPosition = -weaponPos; break;
+        //     default: break;
+        // }
+        transform.localScale = weaponScale;
 
         col.enabled = true;
         spriteShapeRenderer.enabled = true;

@@ -78,7 +78,7 @@ namespace Player
             //TODO: improve this sheet
             // Workaround for movement freeze on heavy attack
             // ----------------------------------------------
-            if (currentState is not PlayerStates.Idle or PlayerStates.Move) { AE_MovementStart(); AE_AttackDamageEnd();}
+            // if (currentState is not PlayerStates.Idle or PlayerStates.Move) { AE_AttackDamageEnd();}
 
             // Scale collider down when crouching
             // ----------------------------------
@@ -100,9 +100,6 @@ namespace Player
         public void AE_MakeStep() { playerManager.OnStep(); }
         public void AE_AttackDamageStart() { playerManager.AttackDamageStart(); }
         public void AE_AttackDamageEnd() { playerManager.AttackDamageEnd(); }
-        
-        public void AE_MovementStop() { playerManager.MovementFreeze(); }
-        public void AE_MovementStart() { playerManager.MovementFreeze(false); }
         #endregion
     }
 }

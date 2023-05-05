@@ -20,6 +20,8 @@ namespace Player
         Boost,
         Dodge
     }
+    
+    public enum MovementModifier { None, Slow, Stop, BoostUp, BoostDown, BoostForward }
 
     public class PlayerMovement : MonoBehaviour
     {
@@ -252,24 +254,54 @@ namespace Player
             return rb2D.velocity.x;
         }
 
-        public void BlockMovement(bool block = true)
+        public void ActivateModifier(MovementModifier modifier, float time=0)
         {
-            // if (bBlockMovement == block) return;
-            // bBlockMovement = block;
-            rb2D.constraints = block ? 
-                RigidbodyConstraints2D.FreezeAll : 
-                RigidbodyConstraints2D.FreezeRotation;
+            switch (modifier)
+            {
+                case MovementModifier.Slow:
+                    StartCoroutine(ModifierSlow(time));
+                    break;
+                case MovementModifier.Stop:
+                    StartCoroutine(ModifierStop(time));
+                    break;
+                case MovementModifier.BoostUp:
+                    rb2D.velocity *= new Vector2(1, 0);
+                    rb2D.AddForce(new Vector2(0, 50), ForceMode2D.Impulse);
+                    break;
+                case MovementModifier.BoostForward:
+                    rb2D.velocity *= new Vector2(0, 1);
+                    rb2D.AddForce(new Vector2(20*lookingDirection, 0), ForceMode2D.Impulse);
+                    bCanDodge = true;
+                    break;
+                case MovementModifier.BoostDown:
+                    rb2D.velocity *= new Vector2(1, 0);
+                    rb2D.AddForce(new Vector2(0, -10), ForceMode2D.Impulse);
+                    break; 
+                case MovementModifier.None:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(modifier), modifier, null);
+            }
         }
 
-        public void UnlockWallSlide()
+        private IEnumerator ModifierSlow(float time)
         {
-            bIsWallSlideActivated = true;
+            var initSpeed = moveSpeed;
+            moveSpeed /= 2;
+            yield return new WaitForSeconds(time);
+            moveSpeed = initSpeed;
+        }
+        
+        private IEnumerator ModifierStop(float time)
+        {
+            var initConstrains = rb2D.constraints;
+            rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            yield return new WaitForSeconds(time);
+            rb2D.constraints = initConstrains;
         }
 
-        public void UnlockBoost()
-        {
-            bIsBoostActivated = true;
-        }
+        public void UnlockWallSlide() { bIsWallSlideActivated = true; }
+
+        public void UnlockBoost() { bIsBoostActivated = true; }
     }
 }
 

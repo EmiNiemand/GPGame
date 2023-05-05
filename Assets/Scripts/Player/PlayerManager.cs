@@ -62,9 +62,10 @@ namespace Player
         #endregion
         
         #region Movement Events
-        public void MovementFreeze(bool freeze = true)
+
+        public void MovementModifierApply(MovementModifier modifier, float time=0)
         {
-            movement.BlockMovement(freeze);
+            movement.ActivateModifier(modifier, time);
         }
 
         public void OnLookingDirectionChange(int newDirection)

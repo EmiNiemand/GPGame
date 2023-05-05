@@ -36,6 +36,7 @@ namespace Player
         private readonly PlayerStates[] statesBlockingAttack = { PlayerStates.Crouch };
         private AttackType attackType;
         private AttackStrength attackStrength;
+        private bool lastAttackSuccessful = false;
 
         // Start is called before the first frame update
         void Start()
@@ -51,6 +52,7 @@ namespace Player
         {
             if (!bIsCombatActivated || bIsOnCooldown) return;
             bIsOnCooldown = true;
+            lastAttackSuccessful = false;
 
             switch (playerState)
             {
@@ -98,24 +100,30 @@ namespace Player
 
         public void OnWeaponHit(Vector2 hitPosition)
         {
+            lastAttackSuccessful = true;
             playerManager.OnWeaponHit(hitPosition);
             // Apply movement modifiers
             switch (attackType)
             {
                 case AttackType.AttackDodge:
-                    break;
-                case AttackType.AttackRun:
+                    //TODO: maybe force dodge?
+                    playerManager.MovementModifierApply(MovementModifier.BoostForward, 1.0f);
                     break;
                 case AttackType.AttackJumpUp:
+                    playerManager.MovementModifierApply(MovementModifier.BoostDown);
                     break;
                 case AttackType.AttackJumpFront:
+                    playerManager.MovementModifierApply(MovementModifier.BoostForward, 0.2f);
                     break;
                 case AttackType.AttackJumpDown:
+                    playerManager.MovementModifierApply(MovementModifier.BoostUp);
                     break;
                 case AttackType.AttackBoost:
+                    playerManager.MovementModifierApply(MovementModifier.BoostUp);
                     break;
+                case AttackType.AttackRun:
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    break;
             }
         }
     
@@ -185,7 +193,34 @@ namespace Player
         // Pass-through methods called from animations
         // -------------------------------------------
         public void AttackDamageStart() { weapon.StartAttack(attackStrength); }
-        public void AttackDamageEnd() { weapon.EndAttack(); StartCoroutine(CooldownTime()); }
+
+        public void AttackDamageEnd()
+        {
+            Debug.Log("BBBBBBBBBBBBBBBB");
+            weapon.EndAttack(); 
+            StartCoroutine(CooldownTime());
+            
+            if (lastAttackSuccessful) return;
+            switch (attackType)
+            {
+                case AttackType.AttackDodge:
+                    playerManager.MovementModifierApply(MovementModifier.Stop, 0.5f);
+                    break;
+                case AttackType.AttackRun:
+                    playerManager.MovementModifierApply(MovementModifier.Slow, 0.5f);
+                    break;
+                case AttackType.AttackJumpFront:
+                    playerManager.MovementModifierApply(MovementModifier.Slow, 1.0f);
+                    break;
+                case AttackType.AttackBoost:
+                    playerManager.MovementModifierApply(MovementModifier.Slow, 0.5f);
+                    break;
+                case AttackType.AttackJumpUp:
+                case AttackType.AttackJumpDown:
+                default:
+                    break;
+            }
+        }
 
         public void UpdateMovingDirection(Vector2 direction) { weapon.UpdateMovingDirection(direction); }
         public void UpdateLookingDirection(int lookingDirection) { weapon.UpdateLookingDirection(lookingDirection); }
