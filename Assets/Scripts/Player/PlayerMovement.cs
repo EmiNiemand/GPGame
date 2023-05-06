@@ -1,49 +1,34 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Vector2 = UnityEngine.Vector2;
 
 namespace Player
 {
-    public enum PlayerStates
-    {
-        Idle,
-        Move,
-        Crouch,
-        Jump,
-        Fall,
-        WallSlide,
-        LedgeGrab,
-        Boost,
-        Dodge
-    }
-    
     public enum MovementModifier { None, Slow, Stop, BoostUp, BoostDown, BoostForward }
-
+    
     public class PlayerMovement : MonoBehaviour
     {
-        //TODO: when player slides up on the wall too high up, he might leave WallSlide and Fall (and doesn't check if he can grab ledge)
-        
-
         [HideInInspector] public Rigidbody2D rb2D;
-        
         [HideInInspector] public Vector2 initColliderSize;
-        
-        [HideInInspector] public Vector2 previousPos;
 
-        private PlayerStateMachine stateMachine;
+        public PlayerStateMachine stateMachine;
         private PlayerManager playerManager;
-        
-        [Header("Move")]
-        public float moveSpeed;
+
+        [Header("Move")] public float moveSpeed;
         public float crouchMoveSpeed;
         [HideInInspector] public Vector2 moveDirection;
         [HideInInspector] public Vector2 direction;
         private int lookingDirectionValue = 1;
-        [HideInInspector] public int lookingDirection
+
+        [HideInInspector]
+        public int lookingDirection
         {
             get => lookingDirectionValue;
             set
@@ -52,54 +37,44 @@ namespace Player
                 playerManager.OnLookingDirectionChange(lookingDirectionValue);
             }
         }
-        [HideInInspector] public int previousLookingDirection;
         
-        [Header("Jump")]
-        public float jumpForce;
+        [Header("Jump")] public float jumpForce;
         public int maxJumpCount;
+        public float normalJumpTime;
         [HideInInspector] public int jumpCount;
         [HideInInspector] public bool bIsJumping = false;
-        
-        [Header("Fall")]
-        public float additionalFallingForce;
+
+        [Header("Fall")] public float additionalFallingForce;
         [HideInInspector] public float initGravityScale;
-        
-        [Header("Dodge")]
-        public float dodgeTime;
-        public float dodgeForce;
+
+        [Header("Dodge")] public float dodgeSpeed;
+        public float dodgeLength;
         public float dodgeCooldown;
-        [HideInInspector] public bool bCanDodge = true;
-        
-        [Header("Boost")]
-        public float boostSpeed;
+        [HideInInspector] public bool bIsDodging = false;
+        [HideInInspector] public bool bIsDodgeOnCooldown = false;
+
+        [Header("Boost")] public float boostSpeed;
         public float boostTime;
         public float boostHeight;
         [HideInInspector] public bool bCanBoost = false;
-        
-        [Header("Wall Slide")]
-        public float wallSlideTime;
-        public float wallJumpTime;
+
+        [Header("Wall Slide")] public float wallSlideTime;
         public float wallGravityScaleDivider;
-        public float blockInputTimer;
+        public float wallSlideCooldown;
         [HideInInspector] public bool bCanWallSlide = false;
-        [HideInInspector] public bool bWallSlide = true;
         [HideInInspector] public bool bIsWallSlideOnCooldown = false;
 
-        [Header("Ledge Grab And Climb")] 
-        public float ledgeClimbSpeed;
-        [HideInInspector] public bool bLedgeGrab = true;
+        [Header("Ledge Grab And Climb")] public float ledgeClimbSpeed;
         [HideInInspector] public bool bIsOnLedge = false;
-        
-        [Header("Crouch")]
-        [HideInInspector] public bool bCanUncrouch = false;
+
+        [Header("Crouch")] [HideInInspector] public bool bCanUncrouch = false;
         [HideInInspector] public bool bUncrouch = false;
-        
-        [Header("Other")]
-        [HideInInspector] public bool bIsGrounded = false;
+
+        [Header("Other")] [HideInInspector] public bool bIsGrounded = false;
         [SerializeField] private bool bIsWallSlideActivated = false;
         [SerializeField] private bool bIsBoostActivated = false;
         [HideInInspector] public bool bBlockMovement = false;
-        
+
         void Start()
         {
             stateMachine = gameObject.AddComponent<PlayerStateMachine>();
@@ -108,55 +83,58 @@ namespace Player
             jumpCount = maxJumpCount;
             initGravityScale = rb2D.gravityScale;
             initColliderSize = GetComponentInChildren<CapsuleCollider2D>().size;
-            previousPos = transform.position;
-            previousLookingDirection = lookingDirection;
         }
-        
+
         void Update()
         {
-            if (moveDirection.x < 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) 
-                                    && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab)) lookingDirection = -1;
-            else if (moveDirection.x > 0 && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) 
-                                         && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab)) lookingDirection = 1;
+            if (moveDirection.x < 0 && !CheckCurrentState(PlayerStates.WallSlide)
+                                    && !CheckCurrentState(PlayerStates.LedgeClimb)) lookingDirection = -1;
+            else if (moveDirection.x > 0 && !CheckCurrentState(PlayerStates.WallSlide)
+                                         && !CheckCurrentState(PlayerStates.LedgeClimb)) lookingDirection = 1;
 
-            if (!stateMachine.CheckCurrentState(PlayerStates.Jump)) {
-                bIsGrounded = Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x / 2, 0.1f), 
-                    Vector2.down, initColliderSize.y / 2 + 0.25f, "Environment");
-                
-            }
-            
-            if (bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.Crouch) && 
-                !stateMachine.CheckCurrentState(PlayerStates.Boost) && !stateMachine.CheckCurrentState(PlayerStates.Jump) && 
-                !stateMachine.CheckCurrentState(PlayerStates.Dodge))
+            bIsGrounded = Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x / 2, 0.1f),
+                Vector2.down, initColliderSize.y / 2 + 0.25f, "Environment");
+
+            if (bIsGrounded && !CheckCurrentState(PlayerStates.Crouch) &&
+                !CheckCurrentState(PlayerStates.Boost) && !CheckCurrentState(PlayerStates.Jump) &&
+                !CheckCurrentState(PlayerStates.Dodge) && !CheckCurrentState(PlayerStates.LedgeClimb))
             {
-                if (moveDirection == Vector2.zero) stateMachine.SetCurrentState(PlayerStates.Idle);
-                else if (moveDirection != Vector2.zero) stateMachine.SetCurrentState(PlayerStates.Move);
+                if (moveDirection == Vector2.zero) SetCurrentState(PlayerStates.Idle);
+                else if (moveDirection != Vector2.zero) SetCurrentState(PlayerStates.Move);
             }
 
-            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown && 
-                     !stateMachine.CheckCurrentState(PlayerStates.WallSlide) && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab))
+            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown &&
+                     !CheckCurrentState(PlayerStates.WallSlide) && !CheckCurrentState(PlayerStates.LedgeClimb))
             {
                 if (moveDirection.x < -0.5 || moveDirection.x > 0.5)
                 {
-                    bCanWallSlide = Utils.ShootBoxcast(transform.position, new Vector2(0.2f, initColliderSize.y / 4),
-                        Vector2.right * lookingDirection, initColliderSize.x / 2 + 0.2f, "Environment");
-                    
-                    bIsOnLedge = !Utils.ShootRaycast(new Vector2(transform.position.x, transform.position.y + 
-                            initColliderSize.y / 4), new Vector2(lookingDirection, 0), 
-                        initColliderSize.y / 2 + 0.4f, "Environment");
-                    
-                    if (bCanWallSlide && (bWallSlide || bLedgeGrab))
+                    var colliderHalfWidth = initColliderSize.x * 0.5f;
+                    var colliderHalfHeight = initColliderSize.y * 0.5f;
+
+                    bCanWallSlide = Utils.ShootBoxcast(
+                                        transform.position + new Vector3(0, colliderHalfHeight * 0.5f, 0),
+                                        new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
+                                        Vector2.right * lookingDirection,
+                                        colliderHalfWidth + 0.1f, "Environment") &&
+                                    Utils.ShootBoxcast(
+                                        transform.position - new Vector3(0, colliderHalfHeight * 0.5f, 0),
+                                        new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
+                                        Vector2.right * lookingDirection,
+                                        colliderHalfWidth + 0.1f, "Environment");
+
+                    if (bCanWallSlide)
                     {
-                        if(bIsOnLedge) stateMachine.SetCurrentState(PlayerStates.LedgeGrab);
-                        else stateMachine.SetCurrentState(PlayerStates.WallSlide);
+                        stateMachine.SetCurrentState(PlayerStates.WallSlide);
                         return;
                     }
                 }
             }
-            
+
             if (rb2D.velocity.y < 0 && !bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Boost) && !stateMachine.CheckCurrentState(PlayerStates.Dodge) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Crouch) && !stateMachine.CheckCurrentState(PlayerStates.LedgeGrab))
+                !stateMachine.CheckCurrentState(PlayerStates.Boost) &&
+                !stateMachine.CheckCurrentState(PlayerStates.Dodge) &&
+                !stateMachine.CheckCurrentState(PlayerStates.Crouch) &&
+                !stateMachine.CheckCurrentState(PlayerStates.LedgeClimb))
             {
                 stateMachine.SetCurrentState(PlayerStates.Fall);
             }
@@ -166,8 +144,8 @@ namespace Player
         // return true if action performed successfully
         public bool Move(Vector2 inputVector)
         {
-            if(bBlockMovement) return false;
-            
+            if (bBlockMovement) return false;
+
             moveDirection = new Vector2(inputVector.x, 0);
             direction = inputVector;
             return true;
@@ -175,33 +153,50 @@ namespace Player
 
         public bool Jump(bool actionStarted)
         {
-            if(bBlockMovement) return false;
-            
+            if (bBlockMovement) return false;
+
             if (!actionStarted) bIsJumping = false;
             if (!(actionStarted && jumpCount > 0)) return false;
-            
+
             bIsJumping = true;
-            
+
             if (stateMachine.CheckCurrentState(PlayerStates.Jump)) return false;
-            if (!stateMachine.CheckCurrentState(PlayerStates.Crouch))
+
+            if (stateMachine.CheckCurrentState(PlayerStates.Crouch))
             {
+                // Player can go directly from crouching to jumping
+                // if he has enough room above him
+                var colliderHalfWidth = initColliderSize.x / 2;
+                var colliderHalfHeight = initColliderSize.y / 2;
+
+                bCanUncrouch = !Utils.ShootBoxcast(transform.position, new Vector2(colliderHalfWidth,
+                    colliderHalfHeight), Vector2.up, colliderHalfHeight / 2, "Environment");
+
+                if (!bCanUncrouch) return false;
                 stateMachine.SetCurrentState(PlayerStates.Jump);
                 return true;
             }
-            // Player can go directly from crouching to jumping
-            // if he has enough room above him
-            bCanUncrouch = !Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x, 
-                initColliderSize.y / 2), Vector2.up, initColliderSize.y / 2 + 0.1f, "Environment");
-            
-            if (!bCanUncrouch) return false;
+
+            if (stateMachine.CheckCurrentState(PlayerStates.WallSlide) && bIsOnLedge)
+            {
+                int sign = moveDirection.x>0 ? 1:-1;
+                if (sign * (int)Mathf.Ceil(Mathf.Abs(moveDirection.x)) != lookingDirection && moveDirection.x != 0)
+                {
+                    stateMachine.SetCurrentState(PlayerStates.Jump);
+                    return true;
+                }
+                stateMachine.SetCurrentState(PlayerStates.LedgeClimb);
+                return true;
+            }
+
             stateMachine.SetCurrentState(PlayerStates.Jump);
             return true;
         }
 
         public bool Crouch(bool actionStarted)
         {
-            if(bBlockMovement) return false;
-            
+            if (bBlockMovement) return false;
+
             if (actionStarted && bIsGrounded)
             {
                 bUncrouch = false;
@@ -214,13 +209,19 @@ namespace Player
 
         public bool Boost()
         {
-            if(bBlockMovement) return false;
+            if (bBlockMovement) return false;
             if (!bIsBoostActivated) return false;
-            
+            if (!bIsGrounded) return false;
+            if (CheckCurrentState(PlayerStates.Boost)) return false;
+
+            var colliderHalfWidth = initColliderSize.x / 2;
+            var colliderHalfHeight = initColliderSize.y / 2;
+
             // Check if there's enough place upwards to boost
-            bCanBoost = !Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x - 0.2f, 
-                initColliderSize.y - 0.2f), Vector2.up, boostHeight, "Environment");
-            if (bCanBoost && bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.Boost))
+            bCanBoost = !Utils.ShootBoxcast(transform.position, new Vector2(colliderHalfWidth,
+                colliderHalfHeight), Vector2.up, boostHeight, "Environment");
+
+            if (bCanBoost)
             {
                 stateMachine.SetCurrentState(PlayerStates.Boost);
             }
@@ -230,23 +231,29 @@ namespace Player
 
         public bool Dodge()
         {
-            if(bBlockMovement) return false;
-            if (!bCanDodge || stateMachine.CheckCurrentState(PlayerStates.Jump) ||
+            if (bBlockMovement) return false;
+
+            if (bIsDodging || bIsDodgeOnCooldown || stateMachine.CheckCurrentState(PlayerStates.Jump) ||
                 stateMachine.CheckCurrentState(PlayerStates.Fall) ||
                 stateMachine.CheckCurrentState(PlayerStates.Crouch)) return false;
-            
+
             stateMachine.SetCurrentState(PlayerStates.Dodge);
             return true;
         }
 
-        public PlayerStates GetPlayerState()
+        public void SetCurrentState(PlayerStates state)
         {
-            return stateMachine.GetPlayerState();
+            stateMachine.SetCurrentState(state);
         }
-        
+
         public bool CheckCurrentState(PlayerStates state)
         {
             return stateMachine.CheckCurrentState(state);
+        }
+
+        public bool CheckPreviousState(PlayerStates state)
+        {
+            return stateMachine.CheckPreviousState(state);
         }
 
         public float GetMoveSpeed()
@@ -271,7 +278,7 @@ namespace Player
                 case MovementModifier.BoostForward:
                     rb2D.velocity *= new Vector2(0, 1);
                     rb2D.AddForce(new Vector2(20*lookingDirection, 0), ForceMode2D.Impulse);
-                    bCanDodge = true;
+                    // bCanDodge = true;
                     break;
                 case MovementModifier.BoostDown:
                     rb2D.velocity *= new Vector2(1, 0);
@@ -297,6 +304,21 @@ namespace Player
             rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             yield return new WaitForSeconds(time);
             rb2D.constraints = initConstrains;
+        }
+
+        // TODO: find better method to do this
+        public IEnumerator DodgeCooldown()
+        {
+            bIsDodgeOnCooldown = true;
+            yield return new WaitForSeconds(dodgeCooldown);
+            bIsDodgeOnCooldown = false;
+        }
+        
+        public IEnumerator WallSlideCooldown()
+        {
+            bIsWallSlideOnCooldown = true;
+            yield return new WaitForSeconds(wallSlideCooldown);
+            bIsWallSlideOnCooldown = false;
         }
 
         public void UnlockWallSlide() { bIsWallSlideActivated = true; }

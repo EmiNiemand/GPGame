@@ -89,7 +89,7 @@ namespace Player
                     break;
                 // Not implemented yet
                 case PlayerStates.WallSlide:
-                case PlayerStates.LedgeGrab:
+                case PlayerStates.LedgeClimb:
                 case PlayerStates.Crouch:
                     break;
                 default:
