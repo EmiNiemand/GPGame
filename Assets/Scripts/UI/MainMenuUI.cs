@@ -8,20 +8,18 @@ namespace UI
 {
     public class MainMenuUI : MonoBehaviour
     {
+        public GameObject mainMenu;
+        public GameObject optionsMenu;
+        public GameObject levelSelectMenu;
+        
         public void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
 
-        public void OnClickPlayButton()
-        {
-            SceneManager.LoadScene("Scenes/GameScene");
-        }
-
-        public void OnClickExitButton()
-        {
-            Application.Quit();
-        }
+        public void OnClickPlayButton() { SceneManager.LoadScene("Scenes/GameScene"); }
+        public void OnClickOptionsButton() {  }
+        public void OnClickExitButton() { Application.Quit(); }
     }
 }

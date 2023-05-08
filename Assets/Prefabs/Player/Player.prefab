@@ -781,35 +781,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb2D: {fileID: 0}
   initColliderSize: {x: 0, y: 0}
-  previousPos: {x: 0, y: 0}
+  stateMachine: {fileID: 0}
   moveSpeed: 1.1
   crouchMoveSpeed: 0.69
   moveDirection: {x: 0, y: 0}
   direction: {x: 0, y: 0}
-  previousLookingDirection: 0
-  jumpForce: 20.5
+  jumpForce: 21
   maxJumpCount: 1
+  normalJumpTime: 0.2
   jumpCount: 0
   bIsJumping: 0
   additionalFallingForce: 1.5
   initGravityScale: 0
-  dodgeTime: 0.25
-  dodgeForce: 20
+  dodgeSpeed: 0.25
+  dodgeLength: 0.75
   dodgeCooldown: 0.1
-  bCanDodge: 1
-  boostSpeed: 0.5
+  bIsDodging: 0
+  bIsDodgeOnCooldown: 0
+  boostSpeed: 0.1
   boostTime: 2
-  boostHeight: 2
+  boostHeight: 1
   bCanBoost: 0
   wallSlideTime: 2
-  wallJumpTime: 0.15
   wallGravityScaleDivider: 15
-  blockInputTimer: 0.2
+  wallSlideCooldown: 0.1
   bCanWallSlide: 0
-  bWallSlide: 1
   bIsWallSlideOnCooldown: 0
-  ledgeClimbSpeed: 0.1
-  bLedgeGrab: 1
+  ledgeClimbSpeed: 0.5
   bIsOnLedge: 0
   bCanUncrouch: 0
   bUncrouch: 0
