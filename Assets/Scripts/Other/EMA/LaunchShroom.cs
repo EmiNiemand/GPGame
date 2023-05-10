@@ -15,6 +15,7 @@ namespace Other.EMA
         // Start is called before the first frame update
         void Start()
         {
+            player = GameObject.Find("Player");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -24,9 +25,17 @@ namespace Other.EMA
             if (other.CompareTag("Player") && !playerMovement.bIsGrounded && !isOnCooldown)
             {
                 StartCoroutine(Cooldown());
+                StartCoroutine(ShrinkAnimation());
                 playerMovement.rb2D.velocity = Vector2.zero;
                 playerMovement.rb2D.AddForce(transform.rotation * Vector2.up * launchValue, ForceMode2D.Impulse);
             }
+        }
+
+        private IEnumerator ShrinkAnimation()
+        {
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y*0.5f, transform.localScale.z);
+            yield return new WaitForSeconds(0.1f);
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y*2, transform.localScale.z);
         }
 
         private IEnumerator Cooldown()

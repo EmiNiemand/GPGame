@@ -23,7 +23,7 @@ namespace Player.States
             combat.SetPlayerVulnerable(false);
             
             if (playerMovement.CheckPreviousState(PlayerStates.Boost) || playerMovement.CheckPreviousState(PlayerStates.WallSlide)) 
-                playerMovement.rb2D.gravityScale *= 0.5f;
+                playerMovement.rb2D.gravityScale *= 0.2f;
             
             //TODO: change it to disabling collisions with enemy layer, remember to add enemy layer and enemy prefabs to it
             var enemies = GameObject.FindGameObjectsWithTag("Enemy");

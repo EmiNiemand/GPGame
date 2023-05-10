@@ -3643,6 +3643,10 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: -1742391145
       objectReference: {fileID: 0}
+    - target: {fileID: 6429466681975871421, guid: 858921697a12ea0428d5678170f658d9, type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 858921697a12ea0428d5678170f658d9, type: 3}
 --- !u!1001 &1333273230
