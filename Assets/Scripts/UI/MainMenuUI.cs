@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 namespace UI
 {
     public class MainMenuUI : MonoBehaviour
     {
-        public GameObject mainMenu;
-        public GameObject optionsMenu;
-        public GameObject levelSelectMenu;
+        public Slider levelSlider;
+        public TextMeshProUGUI levelTitle;
         
         public void Start()
         {
@@ -18,8 +19,13 @@ namespace UI
             Cursor.visible = false;
         }
 
-        public void OnClickPlayButton() { SceneManager.LoadScene("Scenes/GameScene"); }
+        public void OnClickPlayButton() { SceneManager.LoadScene(1); }
         public void OnClickOptionsButton() {  }
         public void OnClickExitButton() { Application.Quit(); }
+
+        public void OnLevelSliderChange()
+        {
+            levelTitle.text = Utils.UI_LevelNames[(int)levelSlider.value];
+        }
     }
 }

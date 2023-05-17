@@ -10,6 +10,11 @@ public enum Layers
 public class Utils : MonoBehaviour
 {
     public const int KnockbackMult = 100;
+    
+    public static List<string> UI_LevelNames = new List<string>() {
+        "Rock bottom", "The Tribe", "A New Beginning", "Faster, Better, Harder, Stronger", 
+        "The Falling Stones", "Cave of the Mountain Wheek", "Keep your cool", "Good Luck!"
+    };
 
     public static bool ShootBoxcast(Vector2 rayInitPos, Vector2 size, Vector2 direction, float distance, string hitTag)
     {
