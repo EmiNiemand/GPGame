@@ -18,7 +18,7 @@ namespace Player.States
                 var colliderHalfHeight = playerMovement.initColliderSize.y / 2;
                 
                 playerMovement.bCanUncrouch = !Utils.ShootBoxcast(playerMovement.transform.position, 
-                    new Vector2(colliderHalfWidth, colliderHalfHeight),  Vector2.up, colliderHalfHeight / 2, "Environment");
+                    new Vector2(colliderHalfWidth, colliderHalfHeight),  Vector2.up, colliderHalfHeight / 2, (int)Layers.Environment);
                 
                 if (playerMovement.bCanUncrouch)
                 {

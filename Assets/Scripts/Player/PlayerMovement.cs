@@ -93,18 +93,20 @@ namespace Player
                                          && !CheckCurrentState(PlayerStates.LedgeClimb)) lookingDirection = 1;
 
             bIsGrounded = Utils.ShootBoxcast(transform.position, new Vector2(initColliderSize.x / 2, 0.1f),
-                Vector2.down, initColliderSize.y / 2 + 0.25f, "Environment");
+                Vector2.down, initColliderSize.y / 2 + 0.25f, (int)Layers.Environment);
+
 
             if (bIsGrounded && !CheckCurrentState(PlayerStates.Crouch) &&
                 !CheckCurrentState(PlayerStates.Boost) && !CheckCurrentState(PlayerStates.Jump) &&
-                !CheckCurrentState(PlayerStates.Dodge) && !CheckCurrentState(PlayerStates.LedgeClimb))
+                !CheckCurrentState(PlayerStates.Dodge) && !CheckCurrentState(PlayerStates.LedgeClimb) &&
+                !CheckCurrentState(PlayerStates.Climb))
             {
                 if (moveDirection == Vector2.zero) SetCurrentState(PlayerStates.Idle);
                 else if (moveDirection != Vector2.zero) SetCurrentState(PlayerStates.Move);
             }
 
-            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown &&
-                     !CheckCurrentState(PlayerStates.WallSlide) && !CheckCurrentState(PlayerStates.LedgeClimb))
+            else if (bIsWallSlideActivated && !bIsGrounded && !bIsWallSlideOnCooldown &&  !CheckCurrentState(PlayerStates.WallSlide) &&
+                     !CheckCurrentState(PlayerStates.LedgeClimb) && !CheckCurrentState(PlayerStates.Climb))
             {
                 if (moveDirection.x < -0.5 || moveDirection.x > 0.5)
                 {
@@ -115,28 +117,27 @@ namespace Player
                                         transform.position + new Vector3(0, colliderHalfHeight * 0.5f, 0),
                                         new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
                                         Vector2.right * lookingDirection,
-                                        colliderHalfWidth + 0.1f, "Environment") &&
+                                        colliderHalfWidth + 0.1f, (int)Layers.Environment) &&
                                     Utils.ShootBoxcast(
                                         transform.position - new Vector3(0, colliderHalfHeight * 0.5f, 0),
                                         new Vector2(colliderHalfWidth, colliderHalfHeight * 0.5f),
                                         Vector2.right * lookingDirection,
-                                        colliderHalfWidth + 0.1f, "Environment");
+                                        colliderHalfWidth + 0.1f, (int)Layers.Environment);
 
                     if (bCanWallSlide)
                     {
-                        stateMachine.SetCurrentState(PlayerStates.WallSlide);
+                        SetCurrentState(PlayerStates.WallSlide);
                         return;
                     }
                 }
             }
 
             if (rb2D.velocity.y < 0 && !bIsGrounded && !stateMachine.CheckCurrentState(PlayerStates.WallSlide) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Boost) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Dodge) &&
-                !stateMachine.CheckCurrentState(PlayerStates.Crouch) &&
-                !stateMachine.CheckCurrentState(PlayerStates.LedgeClimb))
+                !CheckCurrentState(PlayerStates.Boost) && !CheckCurrentState(PlayerStates.Dodge) &&
+                !CheckCurrentState(PlayerStates.Crouch) && !CheckCurrentState(PlayerStates.LedgeClimb) &&
+                !CheckCurrentState(PlayerStates.Climb))
             {
-                stateMachine.SetCurrentState(PlayerStates.Fall);
+                SetCurrentState(PlayerStates.Fall);
             }
         }
 
@@ -145,7 +146,7 @@ namespace Player
         public bool Move(Vector2 inputVector)
         {
             if (bBlockMovement) return false;
-
+            
             moveDirection = new Vector2(inputVector.x, 0);
             direction = inputVector;
             return true;
@@ -160,9 +161,9 @@ namespace Player
 
             bIsJumping = true;
 
-            if (stateMachine.CheckCurrentState(PlayerStates.Jump)) return false;
+            if (CheckCurrentState(PlayerStates.Jump)) return false;
 
-            if (stateMachine.CheckCurrentState(PlayerStates.Crouch))
+            if (CheckCurrentState(PlayerStates.Crouch))
             {
                 // Player can go directly from crouching to jumping
                 // if he has enough room above him
@@ -170,26 +171,26 @@ namespace Player
                 var colliderHalfHeight = initColliderSize.y / 2;
 
                 bCanUncrouch = !Utils.ShootBoxcast(transform.position, new Vector2(colliderHalfWidth,
-                    colliderHalfHeight), Vector2.up, colliderHalfHeight / 2, "Environment");
+                    colliderHalfHeight), Vector2.up, colliderHalfHeight / 2, (int)Layers.Environment);
 
                 if (!bCanUncrouch) return false;
-                stateMachine.SetCurrentState(PlayerStates.Jump);
+                SetCurrentState(PlayerStates.Jump);
                 return true;
             }
 
-            if (stateMachine.CheckCurrentState(PlayerStates.WallSlide) && bIsOnLedge)
+            if (CheckCurrentState(PlayerStates.WallSlide) && bIsOnLedge)
             {
-                int sign = moveDirection.x>0 ? 1:-1;
+                int sign = moveDirection.x>=0 ? 1:-1;
                 if (sign * (int)Mathf.Ceil(Mathf.Abs(moveDirection.x)) != lookingDirection && moveDirection.x != 0)
                 {
-                    stateMachine.SetCurrentState(PlayerStates.Jump);
+                    SetCurrentState(PlayerStates.Jump);
                     return true;
                 }
-                stateMachine.SetCurrentState(PlayerStates.LedgeClimb);
+                SetCurrentState(PlayerStates.LedgeClimb);
                 return true;
             }
 
-            stateMachine.SetCurrentState(PlayerStates.Jump);
+            SetCurrentState(PlayerStates.Jump);
             return true;
         }
 
@@ -233,9 +234,8 @@ namespace Player
         {
             if (bBlockMovement) return false;
 
-            if (bIsDodging || bIsDodgeOnCooldown || stateMachine.CheckCurrentState(PlayerStates.Jump) ||
-                stateMachine.CheckCurrentState(PlayerStates.Fall) ||
-                stateMachine.CheckCurrentState(PlayerStates.Crouch)) return false;
+            if (bIsDodging || bIsDodgeOnCooldown || CheckCurrentState(PlayerStates.Jump) ||
+                CheckCurrentState(PlayerStates.Fall) || CheckCurrentState(PlayerStates.Crouch)) return false;
 
             stateMachine.SetCurrentState(PlayerStates.Dodge);
             return true;

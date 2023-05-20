@@ -62,7 +62,7 @@ namespace Player.States
             
             playerMovement.bCanWallSlide = Utils.ShootBoxcast(playerPosition, 
                 new Vector2(colliderHalfWidth, colliderHalfWidth / 2), 
-                Vector2.right * playerMovement.lookingDirection, colliderHalfWidth, "Environment");
+                Vector2.right * playerMovement.lookingDirection, colliderHalfWidth, (int)Layers.Environment);
             // Force Player to crouch if there's not enough space above him
             // ------------------------------------------------------------
             if (!playerMovement.bCanUncrouch)

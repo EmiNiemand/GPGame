@@ -12,14 +12,12 @@ namespace Player.States
         public override void OnEnterState()
         {
             playerMovement.rb2D.gravityScale = 0;
-            playerMovement.bBlockMovement = true;
         }
 
         public override void OnStayState()
         {
-            bool bIsOverGround = !Utils.ShootRaycast(
-                playerMovement.transform.position - new Vector3(0, playerMovement.initColliderSize.y * 0.5f, 0),
-                Vector2.right * playerMovement.lookingDirection, playerMovement.initColliderSize.x, "Environment");
+            bool bIsOverGround = !Utils.ShootBoxcast(playerMovement.transform.position, playerMovement.initColliderSize,
+                Vector2.right * playerMovement.lookingDirection, playerMovement.initColliderSize.x, (int)Layers.Environment);
 
             if (!bIsOverGround)
             {
@@ -36,7 +34,7 @@ namespace Player.States
                 playerMovement.rb2D.AddForce(Vector2.right * (playerMovement.lookingDirection / playerMovement.ledgeClimbSpeed), ForceMode2D.Impulse);
                 bool bIsOnLedge = Utils.ShootRaycast(
                     playerMovement.transform.position + new Vector3(playerMovement.initColliderSize.x * -playerMovement.lookingDirection * 0.5f, 0, 0),
-                    Vector2.down, playerMovement.initColliderSize.y, "Environment");
+                    Vector2.down, playerMovement.initColliderSize.y * 2, (int)Layers.Environment);
                 if (bIsOnLedge)
                 {
                     playerMovement.rb2D.velocity = new Vector2(0, 0);  
@@ -50,7 +48,6 @@ namespace Player.States
         public override void OnExitState()
         {
             playerMovement.rb2D.gravityScale = playerMovement.initGravityScale;
-            playerMovement.bBlockMovement = false;
         }
     }
 }

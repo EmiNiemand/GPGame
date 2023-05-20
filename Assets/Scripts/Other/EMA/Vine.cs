@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 namespace Other.EMA
@@ -8,32 +9,24 @@ namespace Other.EMA
     public class Vine : MonoBehaviour
     {
         private GameObject player;
-        private Player.PlayerMovement playerMovement;
-
-        private float playerGravityScale;
-        private float playerAdditionalFallinForce;
-        private bool stopMovement = false;
+        private PlayerMovement playerMovement;
         
         // Start is called before the first frame update
         void Start()
         {
             player = GameObject.FindWithTag("Player");
-            playerMovement = player.GetComponent<Player.PlayerMovement>();
-            
-            Debug.Log(playerGravityScale);
+            playerMovement = player.GetComponent<PlayerMovement>();
         }
         
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            playerGravityScale = playerMovement.rb2D.gravityScale;
-            playerAdditionalFallinForce = playerMovement.additionalFallingForce;
-            if (!stopMovement && playerMovement.direction.y != 0)
+            if (other.CompareTag("Player"))
             {
-                playerMovement.additionalFallingForce = 0;
-                playerMovement.rb2D.gravityScale = 0;
-                playerMovement.rb2D.velocity = Vector2.zero;
-                stopMovement = true;
+                if (!playerMovement.CheckCurrentState(PlayerStates.Climb) && playerMovement.direction.y != 0)
+                {
+                    playerMovement.SetCurrentState(PlayerStates.Climb);
+                }
             }
         }
 
@@ -41,14 +34,10 @@ namespace Other.EMA
         {
             if (other.CompareTag("Player"))
             {
-                if (!stopMovement && playerMovement.direction.y != 0)
+                if (!playerMovement.CheckCurrentState(PlayerStates.Climb) && playerMovement.direction.y != 0)
                 {
-                    playerMovement.additionalFallingForce = 0;
-                    playerMovement.rb2D.gravityScale = 0;
-                    playerMovement.rb2D.velocity = Vector2.zero;
-                    stopMovement = true;
+                    playerMovement.SetCurrentState(PlayerStates.Climb);
                 }
-                playerMovement.rb2D.AddForce(Vector2.up * playerMovement.direction.y * playerMovement.moveSpeed / 2, ForceMode2D.Impulse);
             }
         }
 
@@ -56,9 +45,7 @@ namespace Other.EMA
         {
             if (other.CompareTag("Player"))
             {
-                stopMovement = false;
-                playerMovement.additionalFallingForce = playerAdditionalFallinForce;
-                playerMovement.rb2D.gravityScale = playerGravityScale;
+                playerMovement.SetCurrentState(PlayerStates.Fall);
             }
         }
     }

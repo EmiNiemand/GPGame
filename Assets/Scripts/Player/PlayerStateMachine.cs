@@ -14,6 +14,7 @@ namespace Player
         Jump,
         Fall,
         WallSlide,
+        Climb,
         LedgeClimb,
         Boost,
         Dodge
@@ -52,19 +53,19 @@ namespace Player
         
         public void SetCurrentState(PlayerStates state)
         {
+            if (state == currentState) return;
             previousState = currentState;
             currentState = state;
-            if (currentState != previousState)
+            
+            activeState.OnExitState();
+            activeState = CreateState(state);
+            if (activeState == null)
             {
-                activeState.OnExitState();
-                activeState = CreateState(state);
-                if (activeState == null)
-                {
-                    throw new NullReferenceException();
-                }
-                activeState.OnEnterState();
-                playerManager.OnStateChange(currentState);
+                throw new NullReferenceException();
             }
+            activeState.OnEnterState();
+            playerManager.OnStateChange(currentState);
+            
         }
         
         State CreateState(PlayerStates state)
@@ -85,6 +86,9 @@ namespace Player
                 
                 case PlayerStates.Fall:
                     return new Fall(playerMovement);
+                
+                case PlayerStates.Climb:
+                    return new Climb(playerMovement);
                 
                 case PlayerStates.WallSlide:
                     return new WallSlide(playerMovement);
