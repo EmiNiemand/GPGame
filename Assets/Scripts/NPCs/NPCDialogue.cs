@@ -20,15 +20,16 @@ public class NPCDialogue : NPCBase
         dialogue.Setup();
 	}
 	public override void OnInteract() {
+		if(dialogueLineCounter == npcDialogueInfo.dialogueLines.Count)
+		{
+			dialogueLineCounter = 0;
+			dialogue.HideDialogue();
+
+			npcUI.SetName(npcDialogueInfo.characterName);
+			npcUI.SetDescription(npcDialogueInfo.description);
+			return;
+		}
         dialogue.ShowDialogue(npcDialogueInfo.dialogueLines[dialogueLineCounter]);
         dialogueLineCounter++;
-        if(dialogueLineCounter == npcDialogueInfo.dialogueLines.Count)
-        {
-            dialogueLineCounter = 0;
-            dialogue.HideDialogue();
-
-            npcUI.SetName(npcDialogueInfo.characterName);
-            npcUI.SetDescription(npcDialogueInfo.description);
-        }
     }
 }

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350c1b2277ee505459cfb5d697000d0a, type: 3}
+  m_Name: TribeTravellerDialogue
+  m_EditorClassIdentifier: 
+  characterName: Traveller
+  initialName: ???
+  description: Sleepy guy
+  initialDescription: He seems tired
+  dialogueLines:
+  - oh hi! I'm Antonio, nice to meet you!
+  - I think I saw you coming out of the caves, you're quite the adventurous type!
+  - Maybe you'd like to listen to my story then
+  - Believe it or not, just behind the mountain on the horizon, there's a fantastic
+    red thing to eat
+  - How do I know? I travel from place to place, that's kind of my hobby
+  - It's always nice to meet new friends!
+  - I took some of the red thing with me, not much left after all the travel, but
+    I can share it with you!
+  - '*om nom nom nom*'
+  - yes indeed! It's very sweet and crunchy, definitely the best thing I've ever
+    eaten
+  - if you want to get some for yourself, the road is pretty simple.
+  - ' just be cautious, there are many dangers along the way!'
+  - I think I'll get some rest now

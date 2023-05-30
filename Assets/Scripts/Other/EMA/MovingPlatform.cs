@@ -5,7 +5,7 @@ namespace Other.EMA
 {
     public class MovingPlatform : MonoBehaviour
     {
-        [Tooltip("This is relative to start position")]
+        [Tooltip("Relative to start position")]
         [SerializeField] private Vector3 endPosition;
 
         private Vector3 startPosition;
@@ -26,8 +26,8 @@ namespace Other.EMA
             Vector2 velocity = new Vector2(1, 0);
             rigidbody2D.MovePosition(rigidbody2D.position + velocity * ((inverseDirection?-1:1) * Time.fixedDeltaTime));
 
-            if (transform.position == startPosition) inverseDirection = true;
-            else if (transform.position == endPosition) inverseDirection = false;
+            if (Vector3.Distance(transform.position, startPosition) < 0.1f) inverseDirection = true;
+            else if (Vector3.Distance(transform.position, endPosition) < 0.1f) inverseDirection = false;
         }
 
         private void OnCollisionStay2D(Collision2D collision)

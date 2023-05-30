@@ -18,7 +18,7 @@ public class DialoguePassive : MonoBehaviour
 
     public void ShowDialogue(string newText)
     {
-        dialogueText.color = Color.white;
+        dialogueText.color = Color.black;
         dialogueText.text = newText;
         dialogueBackdrop.SetActive(true);
     }
