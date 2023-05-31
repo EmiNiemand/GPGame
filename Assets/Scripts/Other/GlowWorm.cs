@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.U2D;
 
 public class GlowWorm : MonoBehaviour
@@ -9,19 +12,25 @@ public class GlowWorm : MonoBehaviour
     [SerializeField] private float minMoveSpeed = 0.1f;
     [SerializeField] private float minDistanceToMove;
     
+    [SerializeField] private float transitionTime = 2.5f;
+    private float transitionTimer = 0;
+    private bool transitionFinished = false;
+    private float maxIntensity = 1000;
+    private float maxRadius = 50;
+
+    private Light2D light;
 
     private GameObject player;
     private List<Vector2> destinations = new List<Vector2>();
     private Vector2 destination;
     private bool stopped;
-
     private float t;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindWithTag("Player");
-        
+        light = GetComponent<Light2D>();
         // Calculate path
         // --------------
         for (int i = 0; i < points.Count - 2; i += 2)
@@ -68,10 +77,31 @@ public class GlowWorm : MonoBehaviour
         {
             if (destinations.IndexOf(destination) == destinations.Count - 1)
             {
-                Destroy(gameObject);
+                StartCoroutine(IETransition());
                 return;
             }
             destination = destinations[destinations.IndexOf(destination) + 1];
         }
     }
+
+
+    private IEnumerator IETransition()
+    {
+        player.GetComponent<PlayerMovement>().bBlockMovement = true;
+        yield return new WaitUntil(() => Transition());
+        player.GetComponent<PlayerMovement>().bBlockMovement = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    private bool Transition()
+    {
+        transitionTimer += Time.deltaTime;
+        if (transitionTimer >= transitionTime) return true;
+
+        light.pointLightOuterRadius += maxRadius / transitionTime * Time.deltaTime;
+        light.intensity += maxIntensity / transitionTime * Time.deltaTime;
+        light.color = Color.Lerp(light.color, Color.white, transitionTime * Time.deltaTime);
+        return false;
+    }
+    
 }

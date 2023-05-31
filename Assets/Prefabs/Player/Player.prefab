@@ -786,7 +786,7 @@ MonoBehaviour:
   crouchMoveSpeed: 0.69
   moveDirection: {x: 0, y: 0}
   direction: {x: 0, y: 0}
-  jumpForce: 21
+  jumpForce: 22
   maxJumpCount: 1
   normalJumpTime: 0.2
   jumpCount: 0
@@ -812,8 +812,8 @@ MonoBehaviour:
   bCanUncrouch: 0
   bUncrouch: 0
   bIsGrounded: 0
-  bIsWallSlideActivated: 1
-  bIsBoostActivated: 1
+  bIsWallSlideActivated: 0
+  bIsBoostActivated: 0
   bBlockMovement: 0
 --- !u!114 &3305082041565366456
 MonoBehaviour:
