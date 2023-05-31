@@ -33,7 +33,7 @@ namespace Player.States
             if (playerMovement.direction.y <= -0.5 || boostTimer <= 0) playerMovement.SetCurrentState(PlayerStates.Fall);
             if (hoverTimer <= 0)
             {
-                playerMovement.rb2D.velocity = Vector2.zero;
+                playerMovement.rb2D.velocity = new Vector2(playerMovement.rb2D.velocity.x, 0);
                 return;
             }
             playerMovement.rb2D.AddForce(Vector2.up * (playerMovement.boostHeight / playerMovement.boostSpeed), ForceMode2D.Impulse);

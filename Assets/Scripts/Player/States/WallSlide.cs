@@ -19,7 +19,7 @@ namespace Player.States
             var playerPosition = playerMovement.transform.position;
             
             playerMovement.bIsOnLedge = !Utils.ShootRaycast(new Vector2(playerPosition.x, 
-                     playerPosition.y + playerMovement.initColliderSize.y / 4), new Vector2(playerMovement.lookingDirection, 1), 
+                     playerPosition.y + playerMovement.initColliderSize.y / 2), new Vector2(playerMovement.lookingDirection, 1), 
                 playerMovement.initColliderSize.y / 2 + 0.5f, (int)Layers.Environment);
             
             if (playerMovement.bIsOnLedge)

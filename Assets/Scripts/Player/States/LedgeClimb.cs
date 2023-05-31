@@ -34,7 +34,7 @@ namespace Player.States
                 playerMovement.rb2D.AddForce(Vector2.right * (playerMovement.lookingDirection / playerMovement.ledgeClimbSpeed), ForceMode2D.Impulse);
                 bool bIsOnLedge = Utils.ShootRaycast(
                     playerMovement.transform.position + new Vector3(playerMovement.initColliderSize.x * -playerMovement.lookingDirection * 0.5f, 0, 0),
-                    Vector2.down, playerMovement.initColliderSize.y * 2, (int)Layers.Environment);
+                    Vector2.down, playerMovement.initColliderSize.y * 1.5f, (int)Layers.Environment);
                 if (bIsOnLedge)
                 {
                     playerMovement.rb2D.velocity = new Vector2(0, 0);  
