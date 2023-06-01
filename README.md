@@ -18,4 +18,4 @@ Michalina Śledzikowska:
 Player Manager, NPC system, combat system, main hero graphics & animations, audio system
 
 Szymon Habrych:
-Player Movement, Level blockout and design, SFX, Menus
+Player Movement, Player state machine, Level blockout and design, SFX, Menus
