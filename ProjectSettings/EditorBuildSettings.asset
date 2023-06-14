@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Level1_Tribe.unity
     guid: 0954d26c78c598a45aa39094d6eec8c9
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level2_Advanced_Movement.unity
+    guid: d2a5a89ba9cd56b4cb2c885cbdbf5c2e
   m_configObjects: {}
